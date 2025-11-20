@@ -1,0 +1,253 @@
+    :root {
+        --primary: #0B5FFF;
+        --primary-hover: #004DE6;
+        --bg: #F7F9FC;
+        --card-bg: #FFFFFF;
+        --border: #E4E7EC;
+        --text-dark: #1C1C1C;
+        --text-light: #5A5F6A;
+
+        --approved: #38A845;
+        --pending: #E6A100;
+        --rejected: #D6453D;
+        --delegated:rgb(113, 14, 175);
+        --resubmitted:rgb(196, 222, 134);
+        --admin_reject:rgb(255, 39, 39);
+    }
+
+    body {
+        background: var(--bg);
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 15px;
+        color: var(--text-dark);
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    /* ======= CARD ======= */
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 22px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ======= MAIN TABLE ======= */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+        table-layout: fixed;
+    }
+    table td, table th {
+    word-wrap: break-word;      /* older syntax */
+    overflow-wrap: break-word;  /* modern syntax */
+    white-space: normal;        /* allow wrapping */
+}
+    th {
+        text-align: left;
+        padding: 12px 14px;
+        background: #F2F4F7;
+        color: var(--text-light);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+    }
+
+    td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    /* Remove last row border */
+    tr:last-child td {
+        border-bottom: none;
+    }
+    .recordName:hover{
+        cursor: pointer;
+        color: #004DE6;
+    }
+    /* ======= ZOHO BUTTON ======= */
+    .zbtn {
+        background: #2e70ed;
+        ;
+        color: #fff;
+        border: none;
+        padding: 6px 14px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .zbtn:hover {
+        background: var(--primary-hover);
+    }
+
+    /* ======= ZOHO TAG ======= */
+    .tag {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+        display: inline-block;
+    }
+
+    .approved {
+        background: var(--approved);
+    }
+
+    .pending {
+        background: var(--pending);
+    }
+
+    .rejected {
+        background: var(--rejected);
+    }
+    .resubmitted{
+        background: var(--resubmitted);
+    }
+    .delegated{
+        background:  var(--delegated);
+    }
+    .admin_reject{
+        background: var(--admin_reject);
+    }
+
+    /* ===== DETAIL ROW ===== */
+    .approver-row {
+        display: none;
+        background: #FBFCFE;
+        animation: fadeIn 0.22s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-3px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ===== MINI TABLE ===== */
+    .mini-table {
+        width: 95%;
+        margin: 12px 0 12px 20px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #FFF;
+        overflow: hidden;
+    }
+
+    .mini-table th {
+        background: #F5F7FA;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .mini-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mini-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .mini-header {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 15px;
+        color: var(--text-dark);
+    }
+
+    /* testing code */
+
+    /* ======= IMPROVED TABLE COLORS ======= */
+
+    /* Main table header */
+    th {
+        background: #EDF1F7 !important;
+        color: #4A5568 !important;
+        border-bottom: 2px solid #D9DEE7 !important;
+    }
+
+    /* Main table rows */
+    td {
+        background: #FFFFFF;
+        border-bottom: 1px solid #E5E9F1 !important;
+    }
+
+    /* Zebra / hover styling for main rows (Better clarity) */
+    #mainTable tbody tr:not(.approver-row):nth-child(even) td {
+        background: #FAFBFC;
+    }
+
+    #mainTable tbody tr:hover td {
+        background: #F1F6FF !important;
+    }
+
+    /* Mini table header */
+    .mini-table th {
+        background: #F1F3F7 !important;
+        border-bottom: 1px solid #DDE2EB !important;
+        color: #475062 !important;
+    }
+
+    /* Mini table rows */
+    .mini-table td {
+        background: #FFFFFF;
+        border-bottom: 1px solid #E4E7EC !important;
+    }
+
+    /* Zebra rows for approver table */
+    .mini-table tr:nth-child(even) td {
+        background: #FBFCFE;
+    }
+
+    /* Hover effect for mini-table rows */
+    .mini-table tr:hover td {
+        background: #EFF4FA !important;
+    }
+
+    /* Approver row container background */
+    .approver-row {
+        background: #F8FAFF !important;
+    }
+
+    /* Card improvement */
+    .card {
+        border: 1px solid #D9DEE7 !important;
+        background: #FFFFFF;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Button improvement */
+    .zbtn {
+        background: #0C63F4 !important;
+        padding: 7px 16px !important;
+        border-radius: 5px !important;
+        font-weight: 600 !important;
+    }
+
+    .zbtn:hover {
+        background: #0054D6 !important;
+    }
+
+    /* Cleaner header colors */
+    h2 {
+        color: #222831 !important;
+    }
