@@ -6,23 +6,57 @@
     <title>Zoho CRM – Approval History UI</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://live.zwidgets.com/js-sdk/1.4/ZohoEmbededAppSDK.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <h2>Approval History</h2>
-    <!-- <div class="card"> -->
+    <div class="search-wrapper">
+        <span id="clr-filter-txt">Clear Filter</span>
+        <input type="text" name="searchRecord" id="search-record" placeholder="Search by Record Name..,"> 
+        <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
+    </div>
+    <div class="card">
+
         <table id="mainTable">
             <thead>
                 <tr>
                     <th>Record Name</th>
-                    <th>Module</th>
-                    <th>Status</th>
+                    <!-- Module Dropdown -->
+                    <th style="position:relative;">
+                        <div class="dropdown-header" data-dropdown="module-dropdown" data-label="moduleLabel">
+                            <span id="moduleLabel">All Module</span>
+                            <i class="fa-solid fa-caret-down"></i>
+                        </div>
+                        <div class="dropdown-container" id="module-dropdown">
+                            <input type="text" class="searchInput" placeholder="Search...">
+                            <div class="option">All Modules</div>
+                        </div>
+                    </th>
+
+                    <!-- Status Dropdown -->
+                    <th style="position:relative;">
+                        <div class="dropdown-header" data-dropdown="status-dropdown" data-label="statusLabel">
+                            <span id="statusLabel">All Status</span>
+                            <i class="fa-solid fa-caret-down"></i>
+                        </div>
+                        <div class="dropdown-container" id="status-dropdown">
+                            <input type="text" class="searchInput" placeholder="Search...">
+                            <div class="option">All Status</div>
+                            <div class="option">Approved</div>
+                            <div class="option">Rejected</div>
+                            <div class="option">Pending</div>
+                        </div>
+                    </th>
                     <th>Approvers</th>
                 </tr>
             </thead>
             <tbody id="recordBody"></tbody>
         </table>
-    <!-- </div> -->
+    </div>
     <script src="script.js"></script>
 </body>
+
 </html>

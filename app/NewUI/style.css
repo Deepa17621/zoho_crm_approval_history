@@ -10,16 +10,16 @@
         --approved: #38A845;
         --pending: #E6A100;
         --rejected: #D6453D;
-        --delegated:rgb(113, 14, 175);
-        --resubmitted:rgb(196, 222, 134);
-        --admin_reject:rgb(255, 39, 39);
+        --delegated: rgb(113, 14, 175);
+        --resubmitted: rgb(196, 222, 134);
+        --admin_reject: rgb(255, 39, 39);
     }
 
     body {
         background: var(--bg);
         font-family: "Inter", sans-serif;
         margin: 0;
-        padding: 15px;
+        padding: 5px;
         color: var(--text-dark);
     }
 
@@ -33,10 +33,18 @@
     .card {
         background: var(--card-bg);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 22px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        /* border-radius: 8px; */
+        /* padding: 22px; */
+        /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); */
     }
+
+    /* .search-wrapper{
+        border: 0.5px double black;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    } */
 
     /* ======= MAIN TABLE ======= */
     table {
@@ -46,11 +54,17 @@
         font-size: 14px;
         table-layout: fixed;
     }
-    table td, table th {
-    word-wrap: break-word;      /* older syntax */
-    overflow-wrap: break-word;  /* modern syntax */
-    white-space: normal;        /* allow wrapping */
-}
+
+    table td,
+    table th {
+        word-wrap: break-word;
+        /* older syntax */
+        overflow-wrap: break-word;
+        /* modern syntax */
+        white-space: normal;
+        /* allow wrapping */
+    }
+
     th {
         text-align: left;
         padding: 12px 14px;
@@ -69,10 +83,12 @@
     tr:last-child td {
         border-bottom: none;
     }
-    .recordName:hover{
+
+    .recordName:hover {
         cursor: pointer;
         color: #004DE6;
     }
+
     /* ======= ZOHO BUTTON ======= */
     .zbtn {
         background: #2e70ed;
@@ -112,13 +128,16 @@
     .rejected {
         background: var(--rejected);
     }
-    .resubmitted{
+
+    .resubmitted {
         background: var(--resubmitted);
     }
-    .delegated{
-        background:  var(--delegated);
+
+    .delegated {
+        background: var(--delegated);
     }
-    .admin_reject{
+
+    .admin_reject {
         background: var(--admin_reject);
     }
 
@@ -127,6 +146,110 @@
         display: none;
         background: #FBFCFE;
         animation: fadeIn 0.22s ease-out;
+    }
+
+    /* Search wrapper */
+    .search-wrapper {
+        /* background-color: blue; */
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+
+    }
+
+    .search-wrapper input {
+        padding: 0.5rem;
+        width: 250px;
+        border-radius: 5px;
+        border: 0.5px solid grey;
+    }
+
+    .search-wrapper i {
+        padding: 0.5rem;
+    }
+
+    #clr-filter-txt {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 3px;
+        font-size: small;
+        /* optional: adds space below text */
+        &:hover {
+            color: rgb(37, 141, 226);
+            cursor: pointer;
+        }
+    }
+
+    .dropdown-header {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .dropdown-header i {
+        font-size: 12px;
+        color: #333;
+    }
+
+
+    /* Dropdown container */
+    .dropdown-container {
+        display: none;
+        position: absolute;
+        top: 32px;
+        left: 0;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        z-index: 999;
+        width: 160px;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 5px 0;
+    }
+
+    /* Search input */
+    .dropdown-container input {
+        width: 80%;
+        margin: 5px auto;
+        display: block;
+        padding: 5px 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    /* Options styling */
+    .dropdown-container div.option {
+        padding: 5px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: left;
+        font-weight: normal;
+        line-height: 1.2;
+    }
+
+    /* Tick space reserved */
+    .dropdown-container div.option::before {
+        content: "✔";
+        color: green;
+        width: 10px;
+        visibility: hidden;
+        margin-right: 8px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Show tick for selected option */
+    .dropdown-container div.option.selected::before {
+        visibility: visible;
+    }
+
+    /* Hover effect */
+    .dropdown-container div.option:hover {
+        background: #f0f0f0;
     }
 
     @keyframes fadeIn {
