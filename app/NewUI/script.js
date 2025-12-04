@@ -2,8 +2,10 @@
 let filterObject = {
     module: "",
     action: "",
-    search: ""
+    search: "",
+    timeBase: ""
 };
+let specificDateFilter = '', rangeDateFilter=[];
 let allRecords = {};
 let env_details;
 
@@ -24,7 +26,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
     // 2. Build Table with records
     buildTable(approvalHistory);
 
-    // Add Modules to the Dropdown of the Modules Column
+    // Add Modules to the Dropdown of the Modules Column 
     let moduelsDropDownContainer = document.querySelector("#module-dropdown");
 
     for (const moduleName in currentApprovalModules) {
@@ -35,7 +37,6 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
     }
     // Handle all dropdown headers
     document.querySelectorAll(".dropdown-header").forEach(header => {
-
         const dropdownId = header.dataset.dropdown;
         const labelId = header.dataset.label;
         const dropdown = document.getElementById(dropdownId);
@@ -50,7 +51,6 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
             // Close all other dropdowns
             document.querySelectorAll(".dropdown-container").forEach(d => d.style.display = "none");
             dropdown.style.display = isOpen ? "none" : "block";
-            searchInput.value = "";
             filterOptions();
             searchInput.focus();
             event.stopPropagation();
@@ -63,14 +63,61 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                 this.classList.add("selected");
                 label.textContent = this.textContent;
 
-                (label.id == "moduleLabel") ? filterObject["module"] = this.textContent : filterObject["action"] = (this.textContent == "Pending") ? ["Submitted", "Delegated"] : (this.textContent == "Approved") ? "Final_Approval" : this.textContent;
-                // console.log(document.querySelectorAll(`#mainTable tr[data-value='${(label.id === "moduleLabel")?moduleSelect:statusSelect}']`));
+                // (label.id == "moduleLabel") ? filterObject["module"] = this.textContent : filterObject["action"] = (this.textContent == "Pending") ? ["Submitted", "Delegated"] : (this.textContent == "Approved") ? "Final_Approval" : this.textContent;
+                switch (label.id) {
+
+                    case "moduleLabel":
+                        filterObject.module = this.textContent;
+                        break;
+
+                    case "statusLabel":
+                        if (this.textContent === "Pending") {
+                            filterObject.action = ["Submitted", "Delegated"];
+                        } else if (this.textContent === "Approved") {
+                            filterObject.action = "Final_Approval";
+                        } else {
+                            filterObject.action = this.textContent;
+                        }
+                        break;
+                    case "timeFilterLabel":
+                        if (this.textContent.trim() === "On Specific date") {
+                            document.querySelector(".calendar-wrapper").style.display = "block";
+                            // === SPECIFIC DATE CALENDAR ===
+                            buildCalendar("singleCalendar", "single", (date) => {
+                                specificDateFilter = date.toISOString().split("T")[0];
+                                console.log(specificDateFilter);
+                                // document.getElementById("singleOutput").textContent =
+                                //     "Selected: " + date.toISOString().split("T")[0];
+                            });
+                            break;
+                        }
+                        else if (this.textContent.trim() === "Date Range") {
+                            // === DATE RANGE CALENDAR ===
+                            document.querySelector(".calendar-wrapper").style.display = "block";
+                            buildCalendar("singleCalendar", "range", (start, end) => {
+                                if (end) {
+                                    rangeDateFilter[0] = start.toISOString().split("T")[0];
+                                    rangeDateFilter[1] = end.toISOString().split("T")[0];
+                                    console.log(rangeDateFilter);
+                                    // document.getElementById("rangeOutput").textContent =
+                                    //     "Start: " + start.toISOString().split("T")[0] +
+                                    //     " | End: " + end.toISOString().split("T")[0];
+                                }
+                            });
+                            break;
+                        }
+                        filterObject.timeBase = this.textContent;
+                        break;
+                }
 
                 if (this.textContent == "All Modules") {
                     filterObject["module"] = "";
                 }
                 else if (this.textContent == "All Status") {
                     filterObject["action"] = "";
+                }
+                else if (this.textContent == "Anytime") {
+                    filterObject["timeBase"] = "";
                 }
                 applyFilter(filterObject);
 
@@ -101,6 +148,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
 });
 
+
 async function getApprovals() {
     let approvalHistory = await ZOHO.CRM.API.getApprovalsHistory();
     let data = await approvalHistory;
@@ -116,71 +164,10 @@ async function getApprovals() {
     return filteredObject;
 }
 
-// async function buildTable(filteredObject, env_details) {
-
-//     let domainDetails = {
-//         "US": ".com",
-//         "AU": ".com.au",
-//         "EU": ".eu",
-//         "IN": ".in",
-//         "CN": ".com.cn",
-//         "JP": ".jp",
-//         "CA": ".zohocloud.ca"
-//     }
-//     const tbody = document.getElementById("recordBody");
-//     let index = 0;   // Since I'm using for each, explicit index has been used.
-
-//     for (const id in filteredObject) {
-//         if (filteredObject[id][0].action === "Submitted" && filteredObject[id].length === 1) continue;
-//         index++;
-//         let overAllStatus = filteredObject[id][0].action === "Final_Approval" ? "Approved" : (filteredObject[id][0].action === "Submitted" ? "Pending" : (filteredObject[id][0].action == "Delegated") ? "Pending" : filteredObject[id][0].action);
-
-//         tbody.innerHTML += `
-//         <tr class="row" data-id="${id}" data-value="${filteredObject[id][0].module}">
-//             <td class="recordName">${filteredObject[id][0].record.name}</td>
-//             <td>${filteredObject[id][0].module}</td>
-//             <td><span class="tag ${overAllStatus.toLowerCase()}">${overAllStatus}</span></td>
-//             <td><button class="zbtn" onclick="toggle(${index})">View</button></td>
-
-//             <tr id="approver-${index}" class="approver-row">
-//             <td colspan="4">
-//                 <div class="mini-header">Approver List</div>
-
-//                 <table class="mini-table">
-//                     <thead>
-//                         <tr>
-//                             <th>Approver</th>
-//                             <th>Status</th>
-//                             <th>Comment</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody></tbody>
-//                 </table>
-//             </td>
-//         </tr>
-//         </tr>
-//     `;
-
-//     };
-
-//     document.querySelectorAll(".row").forEach(element => {
-//         // View Record In Module.
-//         element.querySelector(".recordName").addEventListener('click', () => {
-//             const id = element.dataset.id;
-//             const value = element.dataset.value;
-//             window.open(`https://crm.zoho${domainDetails[env_details.deployment]}/crm/org${env_details.zgid}/tab/${value}/${id}/`)
-//         });
-//     });
-
-
-// }
-
-
-
 async function buildTable(filteredObject) {
     allRecords = filteredObject;
 
-    applyFilter({}); 
+    applyFilter({});
 }
 
 
@@ -198,6 +185,15 @@ function applyFilter(filters) {
 
 function getFilteredRecords(filters) {
     let result = [];
+    let today = new Date();
+    let yesterday = new Date();
+    let sevenDaysAgo = new Date();
+    let thirtyDaysAgo = new Date();
+
+    yesterday.setDate(today.getDate() - 1);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+
     for (const id in allRecords) {
         const record = allRecords[id][0];
 
@@ -211,7 +207,6 @@ function getFilteredRecords(filters) {
         // Check each filter
         for (const key in filters) {
             if (!filters[key]) continue;
-
             if (key == "search") {
                 const searchText = filters.search.toLowerCase();
                 const name = record.record.name.toLowerCase();
@@ -222,16 +217,60 @@ function getFilteredRecords(filters) {
                 }
                 continue;
             }
+            if (key === "action") {
+                // Module / Status / Action filters
+                const allowed = key === "action" ? filters[key] : [filters[key]];
+                if (!allowed.includes(record[key])) {
+                    match = false;
+                    break;
+                }
+            }
+            // Time Based Filter
+            if (key === "timeBase") {
+                let recordAuditTime = new Date(record.audit_time);
+                if (filterObject[key] == "Today") {
+                    if (today !== recordAuditTime) {
+                        match = false;
+                        break;
+                    }
+                }
+                else if (filterObject[key] === "Last 7 days") {
+                    if (recordAuditTime < sevenDaysAgo || recordAuditTime > today) {
+                        match = false;
+                        break;
+                    }
+                }
 
-            // Module / Status / Action filters
-            const allowed = key === "action" ? filters[key] : [filters[key]];
-            if (!allowed.includes(record[key])) {
-                match = false;
-                break;
+                else if (filterObject[key] === "Last 30 days") {
+                    if (recordAuditTime < thirtyDaysAgo || recordAuditTime > today) {
+                        match = false;
+                        break;
+                    }
+                }
+                else if(filterObject[key] === "On Specific date"){
+                    console.log(specificDateFilter);
+                    console.log(recordAuditTime);
+                    
+                    if(recordAuditTime == specificDateFilter){
+                        match=false;
+                        break;
+                    }
+                }
+                else if(filterObject[key] === "Date Range"){
+                     console.log(rangeDateFilter);
+                    console.log(recordAuditTime);
+                    if(rangeDateFilter[0]<recordAuditTime || rangeDateFilter[1]>recordAuditTime){
+                        match = false;
+                        break;
+                    }
+                }
+
             }
         }
 
-        if (match) result.push(allRecords[id]);
+        if (match) {
+            result.push(allRecords[id]);
+        }
     }
 
     return result;
@@ -243,9 +282,9 @@ function clearFilter() {
         filterObject[key] = "";
     }
     document.querySelector("#search-record").value = "";
-    document.querySelector("#moduleLabel").textContent= "All Modules";
+    document.querySelector("#moduleLabel").textContent = "All Modules";
     document.querySelector("#statusLabel").textContent = "All Status";
-    applyFilter({}); 
+    applyFilter({});
 }
 
 // ---------------- CREATE ROW ELEMENTS ---------------------
@@ -387,4 +426,120 @@ function toggle(index) {
 
 }
 
+//Time Based Filter - (I. Specific date && II. Date Range)
+// UNIVERSAL CALENDAR (supports single + range modes)
+function buildCalendar(containerId, mode, onSelect) {
+    const container = document.getElementById(containerId);
+    container.className = "calendar";
+
+    let current = new Date();
+    let startDate = null;
+    let endDate = null;
+
+    function render() {
+        const year = current.getFullYear();
+        const month = current.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        container.innerHTML = "";
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "calendar-header";
+
+        const prev = document.createElement("button");
+        prev.textContent = "<";
+        prev.onclick = () => {
+            current = new Date(year, month - 1, 1);
+            render();
+        };
+
+        const next = document.createElement("button");
+        next.textContent = ">";
+        next.onclick = () => {
+            current = new Date(year, month + 1, 1);
+            render();
+        };
+
+        const title = document.createElement("div");
+        title.textContent = `${current.toLocaleString("default", { month: "long" })} ${year}`;
+
+        header.appendChild(prev);
+        header.appendChild(title);
+        header.appendChild(next);
+        container.appendChild(header);
+
+        // Grid
+        const grid = document.createElement("div");
+        grid.className = "calendar-grid";
+
+        const weekNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+        weekNames.forEach(d => {
+            const el = document.createElement("div");
+            // el.style.fontWeight = "bold";
+            el.textContent = d;
+            grid.appendChild(el);
+        });
+
+        // Empty spaces
+        for (let i = 0; i < firstDay; i++) {
+            grid.appendChild(document.createElement("div"));
+        }
+
+        // Days
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(year, month, day);
+            const el = document.createElement("div");
+            el.textContent = day;
+            el.className = "calendar-day";
+
+            // Single mode highlight
+            if (mode === "single" && startDate &&
+                dateObj.toDateString() === startDate.toDateString()) {
+                el.classList.add("selected");
+            }
+
+            // Range mode highlight
+            if (mode === "range" && startDate && endDate) {
+                if (dateObj >= startDate && dateObj <= endDate) {
+                    el.classList.add("range");
+                }
+                if (
+                    dateObj.toDateString() === startDate.toDateString() ||
+                    dateObj.toDateString() === endDate.toDateString()
+                ) {
+                    el.classList.add("selected");
+                }
+            }
+
+            el.onclick = () => {
+                if (mode === "single") {
+                    startDate = dateObj;
+                    onSelect(startDate);
+                }
+
+                if (mode === "range") {
+                    if (!startDate || (startDate && endDate)) {
+                        startDate = dateObj;
+                        endDate = null;
+                    } else if (dateObj >= startDate) {
+                        endDate = dateObj;
+                        onSelect(startDate, endDate);
+                    } else {
+                        startDate = dateObj;
+                        endDate = null;
+                    }
+                }
+
+                render();
+            };
+
+            grid.appendChild(el);
+        }
+
+        container.appendChild(grid);
+    }
+
+    render();
+}
 ZOHO.embeddedApp.init();

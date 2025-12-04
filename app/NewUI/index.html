@@ -13,9 +13,36 @@
 
 <body>
     <h2>Approval History</h2>
-    <div class="search-wrapper">
-        <span id="clr-filter-txt">Clear Filter</span>
-        <input type="text" name="searchRecord" id="search-record" placeholder="Search by Record Name..,"> 
+    <div class="page-hdr-wrapper-1">
+        <div class="clr-filter-wrapper">
+            <span id="clr-filter-txt">Clear Filter</span>
+        </div>
+    </div>
+    <div class="page-hdr-wrapper-2">
+
+        <div class="time-based-filter-wrapper">
+            <div class="dropdown-header" data-dropdown="time-filter-dropdown" data-label="timeFilterLabel">
+                <span id="timeFilterLabel">Anytime</span>
+                <i class="fa-solid fa-caret-down"></i>
+            </div>
+            <div class="dropdown-container" id="time-filter-dropdown">
+                <input type="text" class="searchInput" placeholder="Search...">
+                <div class="option">Anytime</div>
+                <div class="option">Today</div>
+                <div class="option">Last 7 days</div>
+                <div class="option">Last 30 days</div>
+                <div class="option date-options-i"><span>On Specific date</span> <i
+                        class="fa-solid fa-angles-right"></i></div>
+                <div class="option date-options-i"><span>Date Range</span> <i class="fa-solid fa-angles-right"></i>
+                </div>
+            </div>
+            <div class="calendar-wrapper">
+                <div id="singleCalendar" class="calendar"></div>
+            </div>
+        </div>
+        <div class="search-bar-wrapper">
+            <input type="text" name="searchRecord" id="search-record" placeholder="Search by Record Name..,">
+        </div>
         <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
     </div>
     <div class="card">
@@ -27,7 +54,7 @@
                     <!-- Module Dropdown -->
                     <th style="position:relative;">
                         <div class="dropdown-header" data-dropdown="module-dropdown" data-label="moduleLabel">
-                            <span id="moduleLabel">All Module</span>
+                            <span id="moduleLabel">All Modules</span>
                             <i class="fa-solid fa-caret-down"></i>
                         </div>
                         <div class="dropdown-container" id="module-dropdown">
