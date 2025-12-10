@@ -5,7 +5,7 @@ let filterObject = {
     search: "",
     timeBase: ""
 };
-let specificDateFilter = '', rangeDateFilter=[];
+let specificDateFilter = '', rangeDateFilter = [];
 let allRecords = {};
 let env_details;
 
@@ -63,9 +63,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                 this.classList.add("selected");
                 label.textContent = this.textContent;
 
-                // (label.id == "moduleLabel") ? filterObject["module"] = this.textContent : filterObject["action"] = (this.textContent == "Pending") ? ["Submitted", "Delegated"] : (this.textContent == "Approved") ? "Final_Approval" : this.textContent;
                 switch (label.id) {
-
                     case "moduleLabel":
                         filterObject.module = this.textContent;
                         break;
@@ -81,27 +79,33 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                         break;
                     case "timeFilterLabel":
                         if (this.textContent.trim() === "On Specific date") {
+
                             document.querySelector(".calendar-wrapper").style.display = "block";
-                            // === SPECIFIC DATE CALENDAR ===
+                            filterObject.timeBase = this.textContent.trim();
                             buildCalendar("singleCalendar", "single", (date) => {
-                                specificDateFilter = date.toISOString().split("T")[0];
-                                console.log(specificDateFilter);
-                                // document.getElementById("singleOutput").textContent =
-                                //     "Selected: " + date.toISOString().split("T")[0];
+                                let d = new Date(date);
+                                specificDateFilter = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                                if (specificDateFilter) {
+                                    applyFilter(filterObject, specificDateFilter);
+                                    document.querySelector(".calendar-wrapper").style.display = "none";
+                                }
                             });
                             break;
                         }
                         else if (this.textContent.trim() === "Date Range") {
-                            // === DATE RANGE CALENDAR ===
+
+                            filterObject.timeBase = this.textContent.trim();
                             document.querySelector(".calendar-wrapper").style.display = "block";
                             buildCalendar("singleCalendar", "range", (start, end) => {
                                 if (end) {
-                                    rangeDateFilter[0] = start.toISOString().split("T")[0];
-                                    rangeDateFilter[1] = end.toISOString().split("T")[0];
-                                    console.log(rangeDateFilter);
-                                    // document.getElementById("rangeOutput").textContent =
-                                    //     "Start: " + start.toISOString().split("T")[0] +
-                                    //     " | End: " + end.toISOString().split("T")[0];
+                                    let startDate = new Date(start);
+                                    rangeDateFilter[0] = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
+                                    let endDate = new Date(end);
+                                    rangeDateFilter[1] = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+                                    if (rangeDateFilter[0] && rangeDateFilter[1]) {
+                                        applyFilter(filterObject, rangeDateFilter[0]);
+                                        document.querySelector(".calendar-wrapper").style.display = "none";
+                                    }
                                 }
                             });
                             break;
@@ -109,18 +113,23 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                         filterObject.timeBase = this.textContent;
                         break;
                 }
+                switch (this.textContent.trim()) {
+                    case "All Modules":
+                        filterObject.module = "";
+                        break;
+                    case "All Status":
+                        filterObject.action = "";
+                        break;
+                    case "Anytime":
+                        filterObject.timeBase = "";
+                        break;
+                }
 
-                if (this.textContent == "All Modules") {
-                    filterObject["module"] = "";
+                if (filterObject.timeBase.trim() == "Date Range" || filterObject.timeBase.trim() == "On Specific date") {
                 }
-                else if (this.textContent == "All Status") {
-                    filterObject["action"] = "";
+                else {
+                    applyFilter(filterObject);
                 }
-                else if (this.textContent == "Anytime") {
-                    filterObject["timeBase"] = "";
-                }
-                applyFilter(filterObject);
-
                 dropdown.style.display = "none";
             });
         });
@@ -137,8 +146,6 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
     });
 
     document.querySelector("#search-record").addEventListener("input", (e) => {
-        // filters.search = this.value.trim();   // update filter live
-
         filterObject["search"] = e.target.value.trim();
         applyFilter(filterObject);
     })
@@ -166,24 +173,36 @@ async function getApprovals() {
 
 async function buildTable(filteredObject) {
     allRecords = filteredObject;
-
     applyFilter({});
 }
 
 
-function applyFilter(filters) {
+async function applyFilter(filters, d = "") {
     const tbody = document.getElementById("recordBody");
     tbody.innerHTML = ""; // clear existing rows
 
-    const filtered = getFilteredRecords(filters);
+    const filtered = getFilteredRecords(filters, d);
+    if (filtered.length <= 0) {
+        let noRecordFoundHtml = `
+             <tr class="no-records-found-tr">
+                <td colspan="4" style="text-align: center; padding: 20px;">
+                    <img src="../assets/no_record_img.jpg" alt="no records found!">
+                    <div class="no-records-found-txt">No records match your filter</div>
+                </td>
+            </tr>   
+        `;
+        tbody.innerHTML = noRecordFoundHtml;
+    }
+    else {
+        filtered.forEach((record, index) => {
+            tbody.appendChild(createRow(record, index));
+            tbody.appendChild(createApproverRow(record, index));
+        });
+    }
 
-    filtered.forEach((record, index) => {
-        tbody.appendChild(createRow(record, index));
-        tbody.appendChild(createApproverRow(record, index));
-    });
 }
 
-function getFilteredRecords(filters) {
+function getFilteredRecords(filters, d = "") {
     let result = [];
     let today = new Date();
     let yesterday = new Date();
@@ -217,7 +236,7 @@ function getFilteredRecords(filters) {
                 }
                 continue;
             }
-            if (key === "action") {
+            else if (key === "action") {
                 // Module / Status / Action filters
                 const allowed = key === "action" ? filters[key] : [filters[key]];
                 if (!allowed.includes(record[key])) {
@@ -225,9 +244,18 @@ function getFilteredRecords(filters) {
                     break;
                 }
             }
+            else if (key === "module") {
+                if (filterObject.module !== record.module) {
+                    match = false;
+                    break;
+                }
+            }
             // Time Based Filter
-            if (key === "timeBase") {
+            else if (key === "timeBase") {
                 let recordAuditTime = new Date(record.audit_time);
+                let date = new Date(recordAuditTime);
+                let formatted = date.toISOString().slice(0, 10);
+
                 if (filterObject[key] == "Today") {
                     if (today !== recordAuditTime) {
                         match = false;
@@ -247,19 +275,14 @@ function getFilteredRecords(filters) {
                         break;
                     }
                 }
-                else if(filterObject[key] === "On Specific date"){
-                    console.log(specificDateFilter);
-                    console.log(recordAuditTime);
-                    
-                    if(recordAuditTime == specificDateFilter){
-                        match=false;
+                else if (filterObject[key].trim() == "On Specific date") {
+                    if (formatted !== specificDateFilter) {
+                        match = false;
                         break;
                     }
                 }
-                else if(filterObject[key] === "Date Range"){
-                     console.log(rangeDateFilter);
-                    console.log(recordAuditTime);
-                    if(rangeDateFilter[0]<recordAuditTime || rangeDateFilter[1]>recordAuditTime){
+                else if (filterObject[key].trim() == "Date Range") {
+                    if (!(new Date(rangeDateFilter[0]) <= new Date(formatted)) || !(new Date(rangeDateFilter[1]) >= new Date(formatted))) {
                         match = false;
                         break;
                     }
@@ -267,12 +290,10 @@ function getFilteredRecords(filters) {
 
             }
         }
-
         if (match) {
             result.push(allRecords[id]);
         }
     }
-
     return result;
 }
 
@@ -379,7 +400,7 @@ function toggle(index) {
         "method": "GET",
     }
     ZOHO.CRM.CONNECTION.invoke(connectionName, req_data).then(function (data) {
-        //------------------------Approval Details
+        // //------------------------Approval Details
         // var req_data1 = {
         //         "method": "GET",
         //         "url": `https://crm.zoho.com/crm/v2.2/${module}/${id}/actions/approval_details`,
@@ -388,7 +409,7 @@ function toggle(index) {
         //         console.log(data)
         //     });
 
-        //---------------------
+        // //---------------------
         let stages = data.details?.statusMessage?.__timeline;
 
         let trs = '';
@@ -489,6 +510,7 @@ function buildCalendar(containerId, mode, onSelect) {
         // Days
         for (let day = 1; day <= daysInMonth; day++) {
             const dateObj = new Date(year, month, day);
+
             const el = document.createElement("div");
             el.textContent = day;
             el.className = "calendar-day";
@@ -514,11 +536,19 @@ function buildCalendar(containerId, mode, onSelect) {
 
             el.onclick = () => {
                 if (mode === "single") {
-                    startDate = dateObj;
-                    onSelect(startDate);
+                    // if (dateObj > current) {
+                    //     el.style.cursor = "not-allowed";
+                    // }
+                    // else {
+                        startDate = dateObj;
+                        onSelect(startDate);
+                    // }
                 }
 
                 if (mode === "range") {
+                    // if (dateObj > current) {
+                    //     el.style.cursor = "not-allowed";
+                    // }
                     if (!startDate || (startDate && endDate)) {
                         startDate = dateObj;
                         endDate = null;
