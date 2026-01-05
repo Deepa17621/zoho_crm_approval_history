@@ -167,7 +167,6 @@ async function getApprovals() {
         acc[item.record.id].push(item);
         return acc;
     }, {});
-
     return filteredObject;
 }
 
@@ -217,9 +216,9 @@ function getFilteredRecords(filters, d = "") {
         const record = allRecords[id][0];
 
         // Skip default unwanted records
-        if (record.action === "Submitted" && allRecords[id].length === 1) {
-            continue;
-        }
+        // if (record.action === "Submitted" && allRecords[id].length === 1) {
+        //     continue;
+        // }
 
         let match = true;
 
@@ -353,10 +352,10 @@ function createApproverRow(obj, index) {
             <table class="mini-table">
                 <thead>
                     <tr>
-                        <th>Approver</th>
+                        <th>Approver Name</th>
                         <th>Status</th>
-                        <th>TimeStamp</th>
-                        <th>Comment</th>
+                        <th>Timestamp</th>
+                        <th>Comments</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -388,13 +387,11 @@ function toggle(index) {
     let connectionName = "approvalhistory";
     const row = document.getElementById(`approver-${index}`);
     const mainRow = row.previousElementSibling;
-
     const id = mainRow.dataset.id;
     const module = mainRow.dataset.value;
 
     // 4. TimeLine Details to get comments
     let url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : module}/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
-
     let req_data = {
         "url": url,
         "method": "GET",
@@ -411,23 +408,21 @@ function toggle(index) {
 
         // //---------------------
         let stages = data.details?.statusMessage?.__timeline;
-
         let trs = '';
-
-        for (let j = stages.length - 2; j >= 0; j--) {
-
+        for (let j = stages.length == 1 ? 0 : stages.length - 2; j >= 0; j--) {
             const date = new Date(stages[j].audited_time);
             const options = { month: "short", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true };
             const formattedAuditedTime = date.toLocaleString("en-US", options).replace(",", "");
 
             if (stages[j].action === "updated") continue;
 
-            let status = '';
+            let status = '', comments = '';
             if (stages[j].action === "final_approval") {
                 status = "Approved";
             }
-            else if (stages[j].action == "Submitted") {
+            else if ((stages[j].action).toLowerCase() == "submitted" || stages[j].action == "task_assigned") {
                 status = "Pending";
+                comments = "Not yet provided";
             }
             else {
                 status = stages[j].action;
@@ -437,7 +432,7 @@ function toggle(index) {
                                 <td>${stages[j].done_by.name}</td>
                                 <td><span class="tag ${status.toLowerCase()}">${status}</span></td>
                                 <td>${formattedAuditedTime}</td>
-                                <td>${stages[j].automation_details.approval_process?.comments || "-"}</td>
+                                <td>${stages[j].automation_details.approval_process?.comments || (status === "Pending" ? comments : "-")}</td>
                             </tr>`
         }
         let miniTable = row.querySelector(".mini-table").querySelector("tbody");
