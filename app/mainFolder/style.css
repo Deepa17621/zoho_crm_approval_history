@@ -18,7 +18,7 @@
     body {
         background: var(--bg);
         font-family: "Inter", sans-serif;
-        margin: 0;
+        margin: 0 20px;
         padding: 5px;
         color: var(--text-dark);
     }
@@ -53,6 +53,10 @@
         border-spacing: 0;
         font-size: 14px;
         table-layout: fixed;
+    }
+
+    .time-based-filter-wrapper {
+        font-size: 14px;
     }
 
     table td,
@@ -150,12 +154,17 @@
 
     /* Search wrapper */
     .page-hdr-wrapper-2 {
-        width: 35%;
+        width: 50%;
         margin-left: auto;
         display: flex;
-        justify-content: space-between;
+        /* gap: 20px; */
+        justify-content: flex-end;
         padding: 0.5rem;
 
+    }
+
+    .page-hdr-wrapper-2>div {
+        margin-left: 20px;
     }
 
     .page-hdr-wrapper-2 input {
@@ -177,11 +186,22 @@
         /* padding: 0.5rem; */
     }
 
+    .clr-filter-wrapper {
+        position: relative;
+        min-height: 30px;
+        width: 70px;
+    }
+
     #clr-filter-txt {
+        position: absolute;
+        bottom: 5px;
+        /* // Fine-tune distance from bottom */
+        left: 0;
+        display: none;
         text-decoration: underline;
         text-decoration-style: dotted;
         text-underline-offset: 3px;
-        font-size: small;
+        font-size: 13.7px;
 
         /* optional: adds space below text */
         &:hover {
@@ -223,6 +243,15 @@
     .time-based-filter-wrapper {
         position: relative;
 
+    }
+
+    .time-based-filter-wrapper>.dropdown-header {
+        border: 0.5px solid grey;
+        padding: 1px 3px;
+        border-radius: 3.5px;
+        width: 150px;
+        display: inline-flex;
+        justify-content: space-between;
     }
 
     #time-filter-dropdown {
@@ -512,7 +541,8 @@
         /* center it */
         opacity: 0.8;
     }
-    .no-records-found-tr div{
-       font-size: medium;
-       color: #4A5568;
+
+    .no-records-found-tr div {
+        font-size: medium;
+        color: #4A5568;
     }

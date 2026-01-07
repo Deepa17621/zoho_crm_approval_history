@@ -8,6 +8,7 @@ let filterObject = {
 let specificDateFilter = '', rangeDateFilter = [];
 let allRecords = {};
 let env_details;
+let allModules={};
 
 ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
@@ -16,6 +17,13 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
     // 1. Get Approval History and Filter the Records - map the duplicated under single record ID.
     let approvalHistory = await getApprovals();
+
+    // GET ALL MODULES TO GET API Names of the Module
+    let allModulesResponse = await ZOHO.CRM.META.getModules();
+    let allModulesData = await allModulesResponse;
+    allModulesData.modules.forEach(element => {
+        allModules[element["module_name"]] = element["api_name"];
+    });
 
     // Filter the present Modules name from current Approval Records.
     let currentApprovalModules = Object.keys(approvalHistory).reduce((acc, val) => {
@@ -59,6 +67,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
         // Update label and tick on option click
         options.forEach(option => {
             option.addEventListener("click", function () {
+                document.querySelector("#clr-filter-txt").style.display = "block";
                 options.forEach(opt => opt.classList.remove("selected"));
                 this.classList.add("selected");
                 label.textContent = this.textContent;
@@ -152,7 +161,23 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
     // Clear All Filter
     document.querySelector("#clr-filter-txt").addEventListener("click", clearFilter);
+    window.addEventListener('click', (e) => {
+        let flag = false;
+        let popUps = document.querySelectorAll(".dropdown-container");
+        popUps.forEach(element => {
+            if(element.contains(e.target)) flag = true;
+            if(!flag){
+                element.style.display = "none";
+            }
+            
+        });
+        // const clickedInsidePopup = popup.contains(e.target);
+        // const clickedButton = btn.contains(e.target);
 
+        // if (!flag) {
+        //      // or style.display = 'none';
+        // }
+    });
 });
 
 
@@ -298,12 +323,16 @@ function getFilteredRecords(filters, d = "") {
 
 
 function clearFilter() {
+    document.querySelector(".calendar-wrapper").style.display = "none";
+    document.querySelector("#clr-filter-txt").style.display = "none";
+
     for (const key in filterObject) {
         filterObject[key] = "";
     }
     document.querySelector("#search-record").value = "";
     document.querySelector("#moduleLabel").textContent = "All Modules";
     document.querySelector("#statusLabel").textContent = "All Status";
+    document.querySelector("#timeFilterLabel").textContent = "Anytime";
     applyFilter({});
 }
 
@@ -354,7 +383,7 @@ function createApproverRow(obj, index) {
                     <tr>
                         <th>Approver Name</th>
                         <th>Status</th>
-                        <th>Timestamp</th>
+                        <th>Event Time</th>
                         <th>Comments</th>
                     </tr>
                 </thead>
@@ -383,15 +412,17 @@ function viewRecord(data) {
     );
 }
 
-function toggle(index) {
+async function toggle(index) {
     let connectionName = "approvalhistory";
     const row = document.getElementById(`approver-${index}`);
     const mainRow = row.previousElementSibling;
     const id = mainRow.dataset.id;
     const module = mainRow.dataset.value;
 
+    let moduleAPIName = allModules[module];
+    
     // 4. TimeLine Details to get comments
-    let url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : module}/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
+    let url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : moduleAPIName}/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
     let req_data = {
         "url": url,
         "method": "GET",
@@ -426,6 +457,8 @@ function toggle(index) {
             }
             else {
                 status = stages[j].action;
+                status = `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+
             }
 
             trs += `<tr>
@@ -535,8 +568,9 @@ function buildCalendar(containerId, mode, onSelect) {
                     //     el.style.cursor = "not-allowed";
                     // }
                     // else {
-                        startDate = dateObj;
-                        onSelect(startDate);
+                    startDate = dateObj;
+
+                    onSelect(startDate);
                     // }
                 }
 
