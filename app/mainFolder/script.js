@@ -8,7 +8,21 @@ let filterObject = {
 let specificDateFilter = '', rangeDateFilter = [];
 let allRecords = {};
 let env_details;
-let allModules={};
+let allModules = {};
+let recordsCountPerPage = 10;
+let currentPage = 1;
+let allRecordsArray = [];
+let totalPages = '';
+
+// Elements 
+let searchRecordInput = document.querySelector("#searcg-record");
+let clearFilterWrapper = document.querySelector("#clr-filter-wrapper");
+let tableBody = document.querySelector("#recordBody");
+let paginationSelect = document.querySelector("#pagination-select");
+let paginationPrevBtn = document.querySelector("#pagination-prev-btn");
+let paginationNextBtn = document.querySelector("#pagination-next-btn");
+let paginationPageTxt = document.querySelector(".pagination-page-no-txt");
+
 
 ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
@@ -29,7 +43,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
     let currentApprovalModules = Object.keys(approvalHistory).reduce((acc, val) => {
         acc[approvalHistory[`${val}`][0]["module"]] = (acc[approvalHistory[`${val}`][0]["module"]] || 0) + 1;
         return acc;
-    }, {})
+    }, {});
 
     // 2. Build Table with records
     buildTable(approvalHistory);
@@ -159,17 +173,27 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
         applyFilter(filterObject);
     })
 
+    //Pagination Select Event
+    paginationSelect.addEventListener("change", (e) => {
+        e.preventDefault();
+        recordsCountPerPage = paginationSelect.value;
+        currentPage = 1;
+        totalPages = Math.ceil(allRecordsArray.length / recordsCountPerPage);
+        paginationPageTxt.innerHTML = `${currentPage}&nbsp; of &nbsp;${totalPages}`;
+        renderTable(currentPage, recordsCountPerPage, allRecordsArray);
+    })
+
     // Clear All Filter
     document.querySelector("#clr-filter-txt").addEventListener("click", clearFilter);
     window.addEventListener('click', (e) => {
         let flag = false;
         let popUps = document.querySelectorAll(".dropdown-container");
         popUps.forEach(element => {
-            if(element.contains(e.target)) flag = true;
-            if(!flag){
+            if (element.contains(e.target)) flag = true;
+            if (!flag) {
                 element.style.display = "none";
             }
-            
+
         });
         // const clickedInsidePopup = popup.contains(e.target);
         // const clickedButton = btn.contains(e.target);
@@ -202,11 +226,22 @@ async function buildTable(filteredObject) {
 
 
 async function applyFilter(filters, d = "") {
+    currentPage = 1;
+    const filtered = getFilteredRecords(filters, d);
+     renderTable(currentPage, recordsCountPerPage, filtered);
+}
+
+function renderTable(currentPage, recordsPerPage, records) {
     const tbody = document.getElementById("recordBody");
     tbody.innerHTML = ""; // clear existing rows
 
-    const filtered = getFilteredRecords(filters, d);
-    if (filtered.length <= 0) {
+    allRecordsArray = records;
+    startIndex = (currentPage - 1) * recordsPerPage;
+    endIndex = Number(startIndex) + Number(recordsPerPage);
+    totalPages = Math.ceil(allRecordsArray.length / recordsPerPage);
+    paginationPageTxt.innerHTML = `${currentPage}&nbsp; of &nbsp;${totalPages}`;
+
+    if (records.length <= 0) {
         let noRecordFoundHtml = `
              <tr class="no-records-found-tr">
                 <td colspan="4" style="text-align: center; padding: 20px;">
@@ -218,14 +253,29 @@ async function applyFilter(filters, d = "") {
         tbody.innerHTML = noRecordFoundHtml;
     }
     else {
-        filtered.forEach((record, index) => {
+        let filteredRecordsArray = records.slice(startIndex, endIndex);
+        filteredRecordsArray.forEach((record, index) => {
             tbody.appendChild(createRow(record, index));
             tbody.appendChild(createApproverRow(record, index));
         });
     }
-
 }
 
+paginationNextBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderTable(currentPage, recordsCountPerPage, allRecordsArray);
+    }
+});
+
+paginationPrevBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage > 1) {
+        currentPage--;
+        renderTable(currentPage, recordsCountPerPage, allRecordsArray);
+    }
+})
 function getFilteredRecords(filters, d = "") {
     let result = [];
     let today = new Date();
@@ -420,7 +470,7 @@ async function toggle(index) {
     const module = mainRow.dataset.value;
 
     let moduleAPIName = allModules[module];
-    
+
     // 4. TimeLine Details to get comments
     let url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : moduleAPIName}/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
     let req_data = {

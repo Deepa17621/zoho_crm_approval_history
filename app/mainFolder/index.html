@@ -55,7 +55,7 @@
                             <i class="fa-solid fa-caret-down"></i>
                         </div>
                         <div class="dropdown-container" id="module-dropdown">
-                            <input type="text" class="searchInput" placeholder="Search...">
+                            <input type="text" class="searchInput" id="searchInput" placeholder="Search...">
                             <div class="option">All Modules</div>
                         </div>
                     </th>
@@ -80,6 +80,22 @@
             <tbody id="recordBody"></tbody>
         </table>
     </div>
+    <footer class="footer">
+        <div class="pagination-wrapper">
+            <span class="pagination-label">No. of records</span>
+            <select name="pagination" id="pagination-select">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <button class="pagination-nav-btn" id="pagination-prev-btn">&lt;</button>
+            <span class="pagination-page-no-txt">1&nbsp; of &nbsp;2</span>
+            <button class="pagination-nav-btn" id="pagination-next-btn">&gt;</button>
+        </div>
+    </footer>
     <script src="script.js"></script>
 </body>
 

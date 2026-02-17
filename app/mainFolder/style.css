@@ -15,24 +15,32 @@
         --admin_reject: rgb(255, 39, 39);
     }
 
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
     body {
         background: var(--bg);
         font-family: "Inter", sans-serif;
-        margin: 0 20px;
-        padding: 5px;
+        /* margin: 0 20px;
+        padding: 5px; */
         color: var(--text-dark);
+        max-height: 90vh;
+        overflow-y: hidden;
     }
 
     h2 {
         font-size: 20px;
         font-weight: 600;
-        margin-bottom: 20px;
+        margin: 20px;
     }
 
     /* ======= CARD ======= */
     .card {
         background: var(--card-bg);
         border: 1px solid var(--border);
+        margin: 5px 18px;
         /* border-radius: 8px; */
         /* padding: 22px; */
         /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); */
@@ -79,7 +87,7 @@
     }
 
     td {
-        padding: 12px 14px;
+        padding: 11.5px 14px;
         border-bottom: 1px solid var(--border);
     }
 
@@ -91,6 +99,36 @@
     .recordName:hover {
         cursor: pointer;
         color: #004DE6;
+    }
+
+    /* // Table scroll Style to test  */
+    #mainTable {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #mainTable thead,
+    #mainTable tbody {
+        display: block;
+    }
+
+    #mainTable tbody {
+        max-height: 455px;
+        /* set height */
+        overflow-y: auto;
+        /* enable scroll */
+    }
+
+    #mainTable thead tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    #mainTable tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
     }
 
     /* ======= ZOHO BUTTON ======= */
@@ -113,36 +151,42 @@
 
     /* ======= ZOHO TAG ======= */
     .tag {
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 12px;
+        /* padding: 4px 10px; */
+        /* border-radius: 4px; */
+        font-size: 14px;
         font-weight: 600;
         color: #fff;
         display: inline-block;
     }
 
     .approved {
-        background: var(--approved);
+        /* background: var(--approved); */
+        color: var(--approved);
     }
 
     .pending {
-        background: var(--pending);
+        /* background: var(--pending); */
+        color: var(--pending);
     }
 
     .rejected {
-        background: var(--rejected);
+        /* background: var(--rejected); */
+        color: var(--rejected);
     }
 
     .resubmitted {
-        background: var(--resubmitted);
+        /* background: var(--resubmitted); */
+        color: var(--resubmitted);
     }
 
     .delegated {
-        background: var(--delegated);
+        /* background: var(--delegated); */
+        color: var(--delegated);
     }
 
     .admin_reject {
-        background: var(--admin_reject);
+        /* background: var(--admin_reject); */
+        color: var(--admin_reject);
     }
 
     /* ===== DETAIL ROW ===== */
@@ -154,13 +198,17 @@
 
     /* Search wrapper */
     .page-hdr-wrapper-2 {
-        width: 50%;
+        width: 55%;
         margin-left: auto;
         display: flex;
         /* gap: 20px; */
         justify-content: flex-end;
         padding: 0.5rem;
-
+        margin-right: 18px;
+        /* margin: 0 20px 0 0; */
+        /* top: 25px;
+        position: fixed;
+        background-color: whitesmoke; */
     }
 
     .page-hdr-wrapper-2>div {
@@ -435,13 +483,6 @@
         background: #F8FAFF !important;
     }
 
-    /* Card improvement */
-    .card {
-        border: 1px solid #D9DEE7 !important;
-        background: #FFFFFF;
-        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.06);
-    }
-
     /* Button improvement */
     .zbtn {
         background: #0C63F4 !important;
@@ -545,4 +586,35 @@
     .no-records-found-tr div {
         font-size: medium;
         color: #4A5568;
+    }
+
+    .footer {
+        position: fixed;
+        /* box-shadow: inset; */
+        color: #6c6868;
+        display: flex;
+        justify-content: right;
+        height: 70px;
+        bottom: 0;
+        align-items: center;
+        width: 100%;
+        box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.3);
+    }
+    .pagination-wrapper{
+        padding: 0.1rem 0.8rem;
+    }
+    #pagination-select{
+        padding: 5px;
+        border-radius:2px;
+        cursor: pointer;
+    }
+    .pagination-nav-btn{
+        border: none;
+        padding: 5px 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.5s;
+        &:hover{
+            background-color: #bcb6b6;
+        }
     }
