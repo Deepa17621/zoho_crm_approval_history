@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Zoho CRM – Approval History UI</title>
+    <title>Zoho CRM – Approval History</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://live.zwidgets.com/js-sdk/1.4/ZohoEmbededAppSDK.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -12,37 +12,40 @@
 </head>
 
 <body>
-    <h2>Approval History</h2>
-    <div class="page-hdr-wrapper-2">
-        <div class="clr-filter-wrapper">
-            <span id="clr-filter-txt">Clear Filter</span>
+    <!-- <h2>Approval History</h2> -->
+    <header>
+        <div class="hdr-left-container">
+            <h3>Approval History</h3>
         </div>
-        <div class="time-based-filter-wrapper">
-            <div class="dropdown-header" data-dropdown="time-filter-dropdown" data-label="timeFilterLabel">
-                <span id="timeFilterLabel">Anytime</span>
-                <i class="fa-solid fa-caret-down"></i>
+        <div class="hdr-right-container">
+            <div class="clr-filter-wrapper">
+                <span id="clr-filter-txt">Clear Filter</span>
             </div>
-            <div class="dropdown-container" id="time-filter-dropdown">
-                <input type="text" class="searchInput" placeholder="Search...">
-                <div class="option">Anytime</div>
-                <div class="option">Today</div>
-                <div class="option">Last 7 days</div>
-                <div class="option">Last 30 days</div>
-                <div class="option date-options-i"><span>On Specific date</span> <i
-                        class="fa-solid fa-angles-right"></i></div>
-                <div class="option date-options-i"><span>Date Range</span> <i class="fa-solid fa-angles-right"></i>
+            <div class="time-based-filter-wrapper">
+                <div class="dropdown-header" data-dropdown="time-filter-dropdown" data-label="timeFilterLabel">
+                    <span id="timeFilterLabel">Anytime</span>
+                    <i class="fa-solid fa-caret-down"></i>
+                </div>
+                <div class="dropdown-container" id="time-filter-dropdown">
+                    <input type="text" class="searchInput" placeholder="Search...">
+                    <div class="option selected">Anytime</div>
+                    <div class="option">Today</div>
+                    <div class="option">Last 7 days</div>
+                    <div class="option">Last 30 days</div>
+                    <div class="option date-options-i"><span>On Specific date</i></span></div>
+                    <div class="option date-options-i"><span>Date Range</span></div>
+                </div>
+                <div class="calendar-wrapper">
+                    <div id="singleCalendar" class="calendar"></div>
                 </div>
             </div>
-            <div class="calendar-wrapper">
-                <div id="singleCalendar" class="calendar"></div>
+            <div class="search-bar-wrapper">
+                <input type="search" name="searchRecord" id="search-record" placeholder="Search by Record Name">
             </div>
+            <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
         </div>
-        <div class="search-bar-wrapper">
-            <input type="search" name="searchRecord" id="search-record" placeholder="Search by Record Name">
-        </div>
-        <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
-    </div>
-    <div class="card">
+    </header>
+    <main class="card">
 
         <table id="mainTable">
             <thead>
@@ -56,7 +59,7 @@
                         </div>
                         <div class="dropdown-container" id="module-dropdown">
                             <input type="text" class="searchInput" id="searchInput" placeholder="Search...">
-                            <div class="option">All Modules</div>
+                            <div class="option selected">All Modules</div>
                         </div>
                     </th>
 
@@ -68,7 +71,7 @@
                         </div>
                         <div class="dropdown-container" id="status-dropdown">
                             <input type="text" class="searchInput" placeholder="Search...">
-                            <div class="option">All Status</div>
+                            <div class="option selected">All Status</div>
                             <div class="option">Approved</div>
                             <div class="option">Rejected</div>
                             <div class="option">Pending</div>
@@ -79,7 +82,7 @@
             </thead>
             <tbody id="recordBody"></tbody>
         </table>
-    </div>
+    </main>
     <footer class="footer">
         <div class="pagination-wrapper">
             <span class="pagination-label">No. of records</span>
@@ -91,9 +94,9 @@
                 <option value="50">50</option>
                 <option value="100">100</option>
             </select>
-            <button class="pagination-nav-btn" id="pagination-prev-btn">&lt;</button>
+            <button class="pagination-nav-btn" id="pagination-prev-btn"></button>
             <span class="pagination-page-no-txt">1&nbsp; of &nbsp;2</span>
-            <button class="pagination-nav-btn" id="pagination-next-btn">&gt;</button>
+            <button class="pagination-nav-btn" id="pagination-next-btn"></button>
         </div>
     </footer>
     <script src="script.js"></script>

@@ -228,7 +228,7 @@ async function buildTable(filteredObject) {
 async function applyFilter(filters, d = "") {
     currentPage = 1;
     const filtered = getFilteredRecords(filters, d);
-     renderTable(currentPage, recordsCountPerPage, filtered);
+    renderTable(currentPage, recordsCountPerPage, filtered);
 }
 
 function renderTable(currentPage, recordsPerPage, records) {
@@ -379,6 +379,10 @@ function clearFilter() {
     for (const key in filterObject) {
         filterObject[key] = "";
     }
+    let selectedOptions = document.querySelectorAll(".selected");
+    selectedOptions.forEach(element => {
+        element.classList.remove("selected");
+    });
     document.querySelector("#search-record").value = "";
     document.querySelector("#moduleLabel").textContent = "All Modules";
     document.querySelector("#statusLabel").textContent = "All Status";
@@ -407,7 +411,7 @@ function createRow(obj, index) {
         <td class="recordName">${data.record.name}</td>
         <td>${data.module}</td>
         <td><span class="tag ${overAllStatus.toLowerCase()}">${overAllStatus}</span></td>
-        <td><button class="zbtn" onclick="toggle(${index})">View</button></td>
+        <td><button class="zbtn" onclick="toggle(event, ${index})">View</button></td>
     `;
 
     // Add record click event
@@ -462,13 +466,42 @@ function viewRecord(data) {
     );
 }
 
-async function toggle(index) {
+async function toggle(event, index) {
     let connectionName = "approvalhistory";
+    let allRows = document.querySelectorAll(".approver-row");
+
     const row = document.getElementById(`approver-${index}`);
     const mainRow = row.previousElementSibling;
     const id = mainRow.dataset.id;
     const module = mainRow.dataset.value;
 
+    if (!event.target.classList.contains("selectedZBTN")) {
+        event.target.classList.add("selectedZBTN");
+        event.target.textContent = "Hide";
+        row.classList.add("currentRow");
+        mainRow.classList.add("currentRow");
+    }
+    else {
+        event.target.classList.remove("selectedZBTN");
+        event.target.textContent = "View";
+        row.classList.remove("currentRow");
+        mainRow.classList.remove("currentRow");
+    }
+
+    row.style.display = row.style.display === "table-row" ? "none" : "table-row";
+
+    allRows.forEach(element => {
+        if (element.id !== row.id) {
+            element.classList.remove(".currentRow");
+            let zbtn = element.previousElementSibling.querySelector(".zbtn");
+            if (zbtn.classList.contains("selectedZBTN")) {
+                zbtn.classList.remove("selectedZBTN");
+                zbtn.textContent = "View";
+            }
+            
+            element.style.display = "none";
+        }
+    });
     let moduleAPIName = allModules[module];
 
     // 4. TimeLine Details to get comments
@@ -520,7 +553,6 @@ async function toggle(index) {
         }
         let miniTable = row.querySelector(".mini-table").querySelector("tbody");
         miniTable.innerHTML = trs;
-        row.style.display = row.style.display === "table-row" ? "none" : "table-row";
     });
 
 }

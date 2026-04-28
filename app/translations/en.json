@@ -1,1 +1,15 @@
-{}
+{
+    "APPROVAL_HISTORY_PAGE_TITLE": "Approval History",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_anytime": "Anytime",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_today": "Today",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_last7Days": "Last 7 Days",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_last30Days": "Last 30 Days",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_onSpecificDate": "On",
+    "APPROVAL_HISTORY_DATE_FILTER_OPTION_between": "Between",
+    "APPROVAL_HISTORY_DATE_FILTER_SEARCH_placeholder": "Search...",
+    "APPROVAL_HISTORY_SEARCH_RECORD_placeholder": "Search by Record Name",
+    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_recordName": "Record Name",
+    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_allModules": "All Modules",
+    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_allStatus": "All Status",
+    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_approvers": "Approvers"
+}  

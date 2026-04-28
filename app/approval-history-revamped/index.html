@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zoho CRM – Approval History</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://live.zwidgets.com/js-sdk/1.4/ZohoEmbededAppSDK.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header class="page-header">
+
+        <!-- ─── Title ─── -->
+        <div class="page-header__title">
+            <h2>Approval History</h2>
+        </div>
+
+        <!-- ─── Filters Bar ─── -->
+        <div class="page-header__filters">
+
+            <div class="filter-search">
+                <svg class="filter-search__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="search" id="global-search" class="filter-search__input"
+                    placeholder="Search by Record Name..." />
+            </div>
+
+            <!-- 2) Module Filter -->
+            <div class="filter-dropdown" id="module-filter" data-filter="module">
+                <button class="filter-dropdown__trigger" data-dropdown="module-filter-list" data-label="moduleLabel"
+                    aria-haspopup="listbox" aria-expanded="false" aria-controls="module-filter-list">
+                    <span class="filter-dropdown__label" id="moduleLabel">All Modules</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="filter-dropdown__menu" id="module-filter-list" role="listbox" hidden>
+                    <input type="text" class="filter-dropdown__search" placeholder="Search..."
+                        aria-label="Search modules" />
+                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                        data-value="All Modules" data-default="true">
+                        All Modules</div>
+                    <!-- JS-populated module options go here -->
+                </div>
+            </div>
+
+            <!-- 3) Status Filter -->
+            <div class="filter-dropdown" id="status-filter" data-filter="status">
+                <button class="filter-dropdown__trigger" aria-haspopup="listbox" aria-expanded="false"
+                    aria-controls="status-filter-list" data-dropdown="status-filter-list" data-label="statusLabel">
+                    <span class="filter-dropdown__label" id="statusLabel">All Status</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="filter-dropdown__menu" id="status-filter-list" role="listbox" hidden>
+                    <input type="text" class="filter-dropdown__search" placeholder="Search..."
+                        aria-label="Search statuses" />
+                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                        data-value="All Status" data-default="true">
+                        All Status</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Approved">
+                        Approved</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Rejected">
+                        Rejected</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Pending">
+                        Pending</div>
+                </div>
+            </div>
+
+            <!-- 4) Time Filter -->
+            <div class="filter-dropdown filter-dropdown--has-calendar" id="time-filter" data-filter="time">
+                <button class="filter-dropdown__trigger" aria-haspopup="listbox" aria-expanded="false"
+                    aria-controls="time-filter-list" data-dropdown="time-filter-list" data-label="timeFilterLabel">
+                    <span class="filter-dropdown__label" id="timeFilterLabel">Anytime</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="filter-dropdown__menu" id="time-filter-list" role="listbox" hidden>
+                    <input type="text" class="filter-dropdown__search" placeholder="Search..."
+                        aria-label="Search time range" />
+                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                        data-value="Anytime" data-default="true">Anytime</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Today">Today</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-7">Last 7 Days</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-30">Last 30 Days</div>
+                    <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
+                        aria-selected="false" data-value="on">On Specific Date</div>
+                    <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
+                        aria-selected="false" data-value="between">Between</div>
+                </div>
+
+                <!-- Calendar (shown only when "on" or "between" is selected) -->
+                <div class="filter-dropdown__calendar" id="time-filter-calendar" hidden>
+                    <div class="calendar" id="single-calendar"></div>
+                </div>
+
+                 <!-- <div class="calendar-wrapper">
+                    <div id="singleCalendar" class="calendar"></div>
+                </div> -->
+            </div>
+            <div class="clr-filter-wrapper">
+                <span id="clr-filter-txt">Clear Filter</span>
+            </div>
+        </div>
+    </header>
+    <main class="table-wrapper">
+        <table id="main-table">
+            <thead>
+                <tr>
+                    <th class="main-table-headers" id="tbl-hdr-record-name">Record Name</th>
+                    <th class="main-table-headers" id="tbl-hdr-module">Module</th>
+                    <th class="main-table-headers" id="tbl-hdr-status">Status</th>
+                    <th class="main-table-headers" id="tbl-hdr-details">Details</th>
+                </tr>
+            </thead>
+            <tbody id="main-table__body"></tbody>
+        </table>
+    </main>
+    <footer class="page-footer">
+        <div class="pagination-wrapper">
+            <span class="pagination-label"> No.of records </span>
+            <select name="pagination" id="pagination-select">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <button class="pagination-nav-btn" id="pagination-prev-btn"></button>
+            <span class="pagination-page-no-txt">1&nbsp; of &nbsp;2</span>
+            <button class="pagination-nav-btn" id="pagination-next-btn"></button>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
