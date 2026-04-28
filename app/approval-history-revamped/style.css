@@ -433,6 +433,13 @@
      cursor: pointer;
  }
 
+ .no-results {
+    padding: 10px;
+    color: #777;
+    font-size: 14px;
+    text-align: center;
+}
+
  /* ===== MINI TABLE ===== */
  .mini-table {
      width: 95%;

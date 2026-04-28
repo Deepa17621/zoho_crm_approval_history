@@ -59,15 +59,15 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
     // 2. Build Table with records
     buildTable(approvalHistory);
-    if(currentPage == 1){
+    if (currentPage == 1) {
         paginationPrevBtn.disabled = true;
         paginationNextBtn.disabled = false;
     }
-    else if(currentPage == totalPages){
+    else if (currentPage == totalPages) {
         paginationNextBtn.disabled = true;
         paginationPrevBtn.disabled = false;
     }
-    else{
+    else {
         paginationPrevBtn.disabled = false;
         paginationNextBtn.disabled = false;
     }
@@ -224,7 +224,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
             document.querySelectorAll(".filter-dropdown__menu")
                 .forEach(d => d.style.display = "none");
 
-            if (getComputedStyle(calendarWrapper).display === "block" ) {
+            if (getComputedStyle(calendarWrapper).display === "block") {
                 calendarWrapper.style.display = "none";
             }
 
@@ -344,11 +344,36 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
         // SEARCH
         searchInput.addEventListener("input", filterOptions);
-        function filterOptions() {
+        function filterOptions(e) {
             const filter = searchInput.value.toLowerCase();
+            let matchFound = false;
+
             options.forEach(option => {
-                option.style.display = option.dataset.value.toLowerCase().includes(filter) ? "flex" : "none";
+
+                if (option.dataset.value.toLowerCase().includes(filter)) {
+                    option.style.display = "flex";
+                    matchFound = true;
+                } else {
+                    option.style.display = "none";
+                }
+
             });
+            let noResult = dropdown.querySelector(".no-results");
+
+            if (!matchFound) {
+                if (!noResult) {
+                    noResult = document.createElement("div");
+                    noResult.className = "no-results";
+                    noResult.textContent = "No results found";
+                    dropdown.appendChild(noResult);
+                }
+
+            } else {
+
+                if (noResult) {
+                    noResult.remove();
+                }
+            }
         }
     });
 
@@ -467,7 +492,7 @@ function renderTable(currentPage, recordsPerPage, records) {
 
 paginationNextBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    if(currentPage == totalPages-1) {
+    if (currentPage == totalPages - 1) {
         paginationNextBtn.disabled = true;
         paginationPrevBtn.disabled = false;
     }
@@ -484,11 +509,11 @@ paginationNextBtn.addEventListener("click", (e) => {
 
 paginationPrevBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    if(currentPage == 2 || currentPage == 1) {
+    if (currentPage == 2 || currentPage == 1) {
         paginationPrevBtn.disabled = true;
         paginationNextBtn.disabled = false;
     }
-    else{
+    else {
         paginationPrevBtn.disabled = false;
         paginationNextBtn.disabled = false;
     }
