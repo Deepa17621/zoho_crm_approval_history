@@ -231,6 +231,13 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
             dropdown.style.display = isOpen ? "none" : "flex";
 
             searchInput.focus();
+            searchInput.value = "";
+            if (dropdown.querySelector(".no-results")) {
+                dropdown.querySelector(".no-results").remove();
+                dropdown.querySelectorAll(".filter-dropdown__option").forEach(element => {
+                    element.style.display = "flex";
+                });
+            }
             e.stopPropagation();
         });
 
@@ -487,6 +494,10 @@ function renderTable(currentPage, recordsPerPage, records) {
             tbody.appendChild(createRow(record, index));
             tbody.appendChild(createApproverRow(record, index));
         });
+
+        document.querySelectorAll(".view-trigger").forEach((el, index) => {
+            el.addEventListener("click", (event) => toggle(event, index));
+        });
     }
 }
 
@@ -618,33 +629,48 @@ function getFilteredRecords(filters, d = "") {
 
 
 function clearFilter() {
-    document.querySelector(".filter-dropdown__calendar").style.display = "none";
-    document.querySelector("#clr-filter-txt").style.display = "none";
+    // Cache selectors
+    const calendar = document.querySelector(".filter-dropdown__calendar");
+    const clearText = document.querySelector("#clr-filter-txt");
+    const globalSearch = document.querySelector("#global-search");
 
-    for (const key in filterObject) {
-        filterObject[key] = "";
-    }
-    calendarState.startDate = null;
-    calendarState.endDate = null;
-    let selectedOptions = document.querySelectorAll(".selected");
-    selectedOptions.forEach(element => {
-        if (element.dataset.default) { }
-        else {
-            element.classList.remove("selected");
-            element.setAttribute("aria-selected", "false");
+    // Hide elements
+    calendar.style.display = "none";
+    clearText.style.display = "none";
+
+    // Reset filter object
+    Object.keys(filterObject).forEach(key => (filterObject[key] = ""));
+
+    // Reset calendar state
+    calendarState.startDate = calendarState.endDate = null;
+
+    // Remove classes
+    document.querySelectorAll(".range").forEach(el => el.classList.remove("range"));
+
+    document.querySelectorAll(".selected").forEach(el => {
+        if (!el.dataset.default) {
+            el.classList.remove("selected");
+            el.setAttribute("aria-selected", "false");
         }
     });
-    let defaultOptions = document.querySelectorAll('[data-default="true"]');
-    defaultOptions.forEach(element => {
-        if (!element.classList.contains("selected")) {
-            element.classList.add("selected");
-            element.setAttribute("aria-selected", "true");
+
+    // Restore defaults
+    document.querySelectorAll('[data-default="true"]').forEach(el => {
+        if (el.previousElementSibling?.classList.contains("filter-dropdown__search")) {
+            el.previousElementSibling.value = "";
         }
+
+        el.classList.add("selected");
+        el.setAttribute("aria-selected", "true");
     });
-    document.querySelector("#global-search").value = "";
+
+    // Reset inputs & labels
+    globalSearch.value = "";
+
     document.querySelector("#moduleLabel").textContent = "All Modules";
     document.querySelector("#statusLabel").textContent = "All Status";
     document.querySelector("#timeFilterLabel").textContent = "Anytime";
+
     applyFilter({});
 }
 
@@ -666,14 +692,17 @@ function createRow(obj, index) {
     wrapper.dataset.value = data.module;
 
     wrapper.innerHTML = `
-        <td class="recordName">${data.record.name}</td>
+        <td class="recordName"><span id="record-name" title = "${data.record.name.length > 15 ? data.record.name : ""}">${data.record.name}</span></td>
         <td>${data.module}</td>
         <td><span class="tag ${overAllStatus.toLowerCase()}">${overAllStatus}</span></td>
-        <td><span class="view-approver-details-trigger" onclick="toggle(event, ${index})">View Details</span></td>
+        <td><div class="view-trigger" data-index="${index}"><span class="view-approver-details-trigger">View Details</span><span><i class="fa-solid fa-chevron-down"></i></span></div></td>
     `;
+    // if (wrapper.querySelector(".recordName").scrollWidth > wrapper.querySelector(".recordName").clientWidth) {
+    //     wrapper.querySelector(".recordName").title = wrapper.querySelector(".recordName").textContent.trim();
+    // }
 
     // Add record click event
-    wrapper.querySelector(".recordName").addEventListener("click", () => {
+    wrapper.querySelector("#record-name").addEventListener("click", () => {
         viewRecord(data);
     });
 
@@ -765,6 +794,11 @@ async function toggle(event, index) {
         "url": url,
         "method": "GET",
     }
+    let approversResponse = await ZOHO.CRM.CONNECTION.invoke(connectionName, req_data);
+    let approverDetails = await approversResponse;
+
+    console.log(approverDetails);
+
     ZOHO.CRM.CONNECTION.invoke(connectionName, req_data).then(function (data) {
         // //------------------------Approval Details
         // var req_data1 = {
@@ -803,13 +837,51 @@ async function toggle(event, index) {
                                 <td>${stages[j].done_by.name}</td>
                                 <td><span class="tag ${status.toLowerCase()}">${status}</span></td>
                                 <td>${formattedAuditedTime}</td>
-                                <td>${stages[j].automation_details.approval_process?.comments || (status === "Pending" ? comments : "-")}</td>
+                                <td title = "${stages[j].automation_details.approval_process?.comments?.length > 15 ? stages[j].automation_details.approval_process?.comments : ""}">${stages[j].automation_details.approval_process?.comments || (status === "Pending" ? comments : "-")}</td>
                             </tr>`
         }
         let miniTable = row.querySelector(".mini-table").querySelector("tbody");
         miniTable.innerHTML = trs;
     });
 
+}
+async function dynamicTaskRunner(tasks) {
+    const totalTasks = tasks.length;
+
+    for (let i = 0; i < totalTasks; i++) {
+        try {
+            await tasks[i](); // Try the current async task
+            const progress = Math.round(((i + 1) / totalTasks) * 100);
+            loadingScreen(progress);
+        } catch (error) {
+            console.error(`Task ${i + 1} failed:`, error);
+            // Stop progress bar and show an error
+            showError("Something went wrong. Please refresh or try again later.");
+            break;
+        }
+    }
+}
+
+function loadingScreen(progress = 0) {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingProgress = document.getElementById('loadingProgress');
+    const mainContent = document.getElementById('mainContent');
+
+    if (loadingProgress) {
+        loadingProgress.style.width = `${progress}%`;
+    }
+
+    if (progress >= 100) {
+        setTimeout(() => {
+            if (loadingOverlay) {
+                loadingOverlay.style.opacity = '0';
+                loadingOverlay.style.visibility = 'hidden';
+            }
+            if (mainContent) {
+                mainContent.classList.remove('content-hidden');
+            }
+        }, 500);
+    }
 }
 
 //Time Based Filter - (I. Specific date && II. Date Range)
@@ -1141,5 +1213,13 @@ function buildCalendar(containerId, state, onSelect) {
     }
 
     render();
+}
+
+function showLoading() {
+    document.getElementById('loader').style.display = 'block';
+}
+
+function hideLoading() {
+    document.getElementById('loader').style.display = 'none';
 }
 ZOHO.embeddedApp.init();
