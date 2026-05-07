@@ -84,122 +84,6 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
         optionDiv.textContent = moduleName;
         moduelsDropDownContainer.appendChild(optionDiv);
     }
-    // Handle all dropdown headers
-    // document.querySelectorAll(".filter-dropdown__trigger").forEach(header => {
-    //     const dropdownId = header.dataset.dropdown;
-    //     const labelId = header.dataset.label;
-    //     const dropdown = document.getElementById(dropdownId);
-    //     const label = document.getElementById(labelId);
-
-    //     const searchInput = dropdown.querySelector(".filter-dropdown__search");
-    //     const options = Array.from(dropdown.querySelectorAll(".filter-dropdown__option"));
-
-    //     // Open/close dropdown on click
-    //     header.addEventListener("click", function (event) {
-    //         const isOpen = dropdown.style.display === "flex";
-    //         // Close all other dropdowns
-    //         document.querySelectorAll(".filter-dropdown__menu").forEach(d => d.style.display = "none");
-
-    //         dropdown.style.display = isOpen ? "none" : "flex";
-    //         filterOptions();
-    //         searchInput.focus();
-    //         event.stopPropagation();
-    //     });
-
-    //     // Update label and tick on option click
-    //     options.forEach(option => {
-    //         option.addEventListener("click", function () {
-    //             // document.querySelector("#clr-filter-txt").style.display = "block";
-    //             options.forEach(opt => {
-    //                 opt.setAttribute("aria-selected", "false");
-    //                 opt.classList.remove("selected");
-    //             });
-    //             this.classList.add("selected");
-    //             this.setAttribute("aria-selected", "true");
-    //             label.textContent = this.dataset.value;
-
-    //             switch (label.id) {
-    //                 case "moduleLabel":
-    //                     filterObject.module = this.dataset.value;
-    //                     break;
-
-    //                 case "statusLabel":
-    //                     if (this.dataset.value === "Pending") {
-    //                         filterObject.action = ["Submitted", "Delegated"];
-    //                     } else if (this.dataset.value === "Approved") {
-    //                         filterObject.action = "Final_Approval";
-    //                     } else {
-    //                         filterObject.action = this.dataset.value;
-    //                     }
-    //                     break;
-    //                 case "timeFilterLabel":
-    //                     if (this.dataset.value === "on") {
-
-    //                         document.querySelector(".filter-dropdown__calendar").style.display = "block";
-    //                         filterObject.timeBase = this.dataset.value;
-    //                         buildCalendar("single-calendar", "single", (date, selectedDate = "") => {
-    //                             let d = new Date(date);
-    //                             specificDateFilter = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    //                             if (specificDateFilter) {
-    //                                 applyFilter(filterObject, specificDateFilter);
-    //                                 document.querySelector(".filter-dropdown__calendar").style.display = "none";
-    //                             }
-    //                         });
-    //                         break;
-    //                     }
-    //                     else if (this.dataset.value === "between") {
-
-    //                         filterObject.timeBase = this.dataset.value;
-    //                         document.querySelector(".filter-dropdown__calendar").style.display = "block";
-    //                         buildCalendar("single-calendar", "range", (start, end, selectedDate = {}) => {
-    //                             if (end) {
-    //                                 let startDate = new Date(start);
-    //                                 rangeDateFilter[0] = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
-    //                                 let endDate = new Date(end);
-    //                                 rangeDateFilter[1] = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
-    //                                 if (rangeDateFilter[0] && rangeDateFilter[1]) {
-    //                                     applyFilter(filterObject, rangeDateFilter[0]);
-    //                                     document.querySelector(".filter-dropdown__calendar").style.display = "none";
-    //                                 }
-    //                             }
-    //                         });
-    //                         break;
-    //                     }
-    //                     filterObject.timeBase = this.dataset.value;
-    //                     break;
-    //             }
-    //             switch (this.dataset.value) {
-    //                 case "All Modules":
-    //                     filterObject.module = "";
-    //                     break;
-    //                 case "All Status":
-    //                     filterObject.action = "";
-    //                     break;
-    //                 case "Anytime":
-    //                     filterObject.timeBase = "";
-    //                     break;
-    //             }
-
-    //             if (filterObject.timeBase.trim() == "between" || filterObject.timeBase.trim() == "on") {
-    //             }
-    //             else {
-    //                 applyFilter(filterObject);
-    //             }
-    //             checkFilters();
-    //             dropdown.style.display = "none";
-    //         });
-    //     });
-
-    //     // Filter options based on search input
-    //     searchInput.addEventListener("input", filterOptions);
-
-    //     function filterOptions() {
-    //         const filter = searchInput.value.toLowerCase();
-    //         options.forEach(option => {
-    //             option.style.display = option.dataset.value.toLowerCase().includes(filter) ? "flex" : "none";
-    //         });
-    //     }
-    // });
 
     // New Code to Handle dropdowns
     // ==============================
@@ -672,6 +556,7 @@ function clearFilter() {
     document.querySelector("#timeFilterLabel").textContent = "Anytime";
 
     applyFilter({});
+    triggerToast("Filter categories reset!", 2000);
 }
 
 // ---------------- CREATE ROW ELEMENTS ---------------------
@@ -692,7 +577,7 @@ function createRow(obj, index) {
     wrapper.dataset.value = data.module;
 
     wrapper.innerHTML = `
-        <td class="recordName"><span id="record-name" title = "${data.record.name.length > 15 ? data.record.name : ""}">${data.record.name}</span></td>
+        <td class="recordName"><span id="record-name" title = "${data.record.name.length > 20 ? data.record.name : ""}">${data.record.name}</span></td>
         <td>${data.module}</td>
         <td><span class="tag ${overAllStatus.toLowerCase()}">${overAllStatus}</span></td>
         <td><div class="view-trigger" data-index="${index}"><span class="view-approver-details-trigger">View Details</span><span><i class="fa-solid fa-chevron-down"></i></span></div></td>
@@ -714,23 +599,36 @@ function createApproverRow(obj, index) {
     const row = document.createElement("tr");
     row.className = "approver-row";
     row.id = `approver-${index}`;
-    row.style.display = "none";
+    // row.style.display = "none";
 
     row.innerHTML = `
-        <td colspan="4">
-            <table class="mini-table">
-                <thead>
-                    <tr>
-                        <th>Approver Name</th>
-                        <th>Status</th>
-                        <th>Event Time</th>
-                        <th>Comments</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </td>
-    `;
+                    <td colspan="4">
+
+                        <div class="expand-wrapper">
+
+                            <div class="loading-overlay hidden">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">Loading...</div>
+                            </div>
+
+                            <div class="approver-content hidden">
+                                <table class="mini-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Approver Name</th>
+                                            <th>Status</th>
+                                            <th>Event Time</th>
+                                            <th>Comments</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </td>
+                `;
 
     return row;
 }
@@ -753,98 +651,252 @@ function viewRecord(data) {
 }
 
 async function toggle(event, index) {
-    let connectionName = "approvalhistory";
-    let allRows = document.querySelectorAll(".approver-row");
+
+    const connectionName = "approvalhistory";
 
     const row = document.getElementById(`approver-${index}`);
     const mainRow = row.previousElementSibling;
+
+    const trigger = mainRow.querySelector(".view-trigger");
+
+    const isOpen = row.classList.contains("open");
+
     const id = mainRow.dataset.id;
     const module = mainRow.dataset.value;
 
-    if (!event.target.classList.contains("selectedZBTN")) {
-        event.target.classList.add("selectedZBTN");
-        row.classList.add("currentRow");
-        mainRow.classList.add("currentRow");
+    closeAllRows(row);
+
+    if (!isOpen) {
+        await openRow(row, mainRow, trigger, id, module, connectionName);
+    } else {
+        closeRow(row, mainRow, trigger);
     }
-    else {
-        event.target.classList.remove("selectedZBTN");
-        row.classList.remove("currentRow");
-        mainRow.classList.remove("currentRow");
-    }
-
-    row.style.display = row.style.display === "table-row" ? "none" : "table-row";
-
-    allRows.forEach(element => {
-        if (element.id !== row.id) {
-            element.classList.remove(".currentRow");
-            let zbtn = element.previousElementSibling.querySelector(".view-approver-details-trigger");
-            if (zbtn.classList.contains("selectedZBTN")) {
-                zbtn.classList.remove("selectedZBTN");
-                zbtn.textContent = "View Details";
-            }
-
-            element.style.display = "none";
-        }
-    });
-    let moduleAPIName = allModules[module];
-
-    // 4. TimeLine Details to get comments
-    let url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : moduleAPIName}/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
-    let req_data = {
-        "url": url,
-        "method": "GET",
-    }
-    let approversResponse = await ZOHO.CRM.CONNECTION.invoke(connectionName, req_data);
-    let approverDetails = await approversResponse;
-
-    console.log(approverDetails);
-
-    ZOHO.CRM.CONNECTION.invoke(connectionName, req_data).then(function (data) {
-        // //------------------------Approval Details
-        // var req_data1 = {
-        //         "method": "GET",
-        //         "url": `https://crm.zoho.com/crm/v2.2/${module}/${id}/actions/approval_details`,
-        //     };
-        //     ZOHO.CRM.CONNECTION.invoke(connectionName, req_data1).then(function (data) {
-        //         console.log(data)
-        //     });
-
-        // //---------------------
-        let stages = data.details?.statusMessage?.__timeline;
-        let trs = '';
-        for (let j = stages.length == 1 ? 0 : stages.length - 2; j >= 0; j--) {
-            const date = new Date(stages[j].audited_time);
-            const options = { month: "short", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true };
-            const formattedAuditedTime = date.toLocaleString("en-US", options).replace(",", "");
-
-            if (stages[j].action === "updated") continue;
-
-            let status = '', comments = '';
-            if (stages[j].action === "final_approval") {
-                status = "Approved";
-            }
-            else if ((stages[j].action).toLowerCase() == "submitted" || stages[j].action == "task_assigned") {
-                status = "Pending";
-                comments = "Not yet provided";
-            }
-            else {
-                status = stages[j].action;
-                status = `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
-
-            }
-
-            trs += `<tr>
-                                <td>${stages[j].done_by.name}</td>
-                                <td><span class="tag ${status.toLowerCase()}">${status}</span></td>
-                                <td>${formattedAuditedTime}</td>
-                                <td title = "${stages[j].automation_details.approval_process?.comments?.length > 15 ? stages[j].automation_details.approval_process?.comments : ""}">${stages[j].automation_details.approval_process?.comments || (status === "Pending" ? comments : "-")}</td>
-                            </tr>`
-        }
-        let miniTable = row.querySelector(".mini-table").querySelector("tbody");
-        miniTable.innerHTML = trs;
-    });
-
 }
+
+
+
+function closeAllRows(currentRow) {
+
+    document.querySelectorAll(".approver-row").forEach(row => {
+
+        if (row !== currentRow && row.classList.contains("open")) {
+
+            const mainRow = row.previousElementSibling;
+            const trigger = mainRow.querySelector(".view-trigger");
+
+            closeRow(row, mainRow, trigger);
+        }
+    });
+}
+
+
+
+async function openRow(row, mainRow, trigger, id, module, connectionName) {
+
+    const loading = row.querySelector(".loading-overlay");
+
+    const approverContent = row.querySelector(".approver-content");
+
+    row.style.display = "table-row";
+
+    trigger.classList.add("selectedZBTN");
+
+    mainRow.classList.add("currentRow");
+
+    updateTriggerUI(trigger, true);
+
+    requestAnimationFrame(() => {
+        row.classList.add("open");
+    });
+
+    /*
+        show loader
+    */
+    loading.classList.remove("hidden");
+
+    approverContent.classList.add("hidden");
+
+
+    /*
+        caching
+    */
+
+    if (row.dataset.loaded === "true") {
+
+        loading.classList.add("hidden");
+
+        approverContent.classList.remove("hidden");
+
+        return;
+    }
+
+    try {
+
+        const moduleAPIName = allModules[module];
+
+        const url = `https://www.zohoapis.com/crm/v8/${
+            module === "Potentials" ? "Deals" : moduleAPIName
+        }/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
+
+        const req_data = {
+            url,
+            method: "GET"
+        };
+
+        const res = await ZOHO.CRM.CONNECTION.invoke(connectionName, req_data);
+
+        if (res.code === "SUCCESS") {
+
+            const stages = res.details?.statusMessage?.__timeline || [];
+
+            renderApproverTable(row, stages);
+
+            row.dataset.loaded = "true";
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        approverContent.innerHTML = `
+            <div class="error-message">
+                Failed to load approval details
+            </div>
+        `;
+    }
+
+    finally {
+
+        loading.classList.add("hidden");
+
+        approverContent.classList.remove("hidden");
+    }
+}
+
+
+
+function closeRow(row, mainRow, trigger) {
+
+    trigger.classList.remove("selectedZBTN");
+
+    mainRow.classList.remove("currentRow");
+
+    updateTriggerUI(trigger, false);
+
+    row.classList.remove("open");
+
+    setTimeout(() => {
+        row.style.display = "none";
+    }, 240);
+}
+
+
+
+function updateTriggerUI(trigger, isOpen) {
+
+    const text = trigger.querySelector(".view-approver-details-trigger");
+
+    const icon = trigger.querySelector(".fa-solid");
+
+    text.textContent = isOpen
+        ? "Hide Details"
+        : "View Details";
+
+    icon.classList.toggle("fa-chevron-up", isOpen);
+
+    icon.classList.toggle("fa-chevron-down", !isOpen);
+}
+
+
+
+function renderApproverTable(row, stages) {
+
+    let trs = "";
+
+    for (let j = stages.length - 1; j >= 0; j--) {
+
+        if (stages[j].action === "updated") continue;
+        if(stages[j].done_by === null) continue;
+
+        const date = new Date(stages[j].audited_time);
+
+        const options = {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        };
+
+        const formattedAuditedTime = date
+            .toLocaleString("en-US", options)
+            .replace(",", "");
+
+        let status = "";
+
+        let comments = "";
+
+        if (stages[j].action === "final_approval") {
+
+            status = "Approved";
+
+        } else if (
+            stages[j].action.toLowerCase() === "submitted" ||
+            stages[j].action === "task_assigned"
+        ) {
+
+            status = "Pending";
+
+            comments = "Not yet provided";
+
+        } else {
+
+            status = stages[j].action;
+
+            status = `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+        }
+
+        trs += `
+            <tr>
+                <td>${stages[j].done_by?.name}</td>
+
+                <td>
+                    <span class="tag ${status.toLowerCase()}">
+                        ${status}
+                    </span>
+                </td>
+
+                <td>${formattedAuditedTime}</td>
+
+                <td
+                    title="${
+                        stages[j].automation_details
+                            ?.approval_process
+                            ?.comments?.length > 20
+                            ? stages[j].automation_details
+                                ?.approval_process
+                                ?.comments
+                            : ""
+                    }"
+                >
+                    ${
+                        stages[j].automation_details
+                            ?.approval_process
+                            ?.comments
+                        ||
+                        (status === "Pending"
+                            ? comments
+                            : "-")
+                    }
+                </td>
+            </tr>
+        `;
+    }
+
+    row.querySelector(".mini-table tbody").innerHTML = trs;
+}
+
 async function dynamicTaskRunner(tasks) {
     const totalTasks = tasks.length;
 
@@ -883,148 +935,6 @@ function loadingScreen(progress = 0) {
         }, 500);
     }
 }
-
-//Time Based Filter - (I. Specific date && II. Date Range)
-// UNIVERSAL CALENDAR (supports single + range modes)
-// function buildCalendar(containerId, mode, onSelect) {
-//     const container = document.getElementById(containerId);
-//     container.className = "calendar";
-
-//     let current = new Date();
-//     let startDate = null;
-//     let endDate = null;
-
-//     function render() {
-//         const year = current.getFullYear();
-//         const month = current.getMonth();
-//         const firstDay = new Date(year, month, 1).getDay();
-//         const daysInMonth = new Date(year, month + 1, 0).getDate();
-//         container.innerHTML = "";
-
-//         // Header
-//         const header = document.createElement("div");
-//         header.className = "calendar-header";
-
-//         const prev = document.createElement("button");
-//         prev.textContent = "<";
-//         prev.onclick = () => {
-//             current = new Date(year, month - 1, 1);
-//             render();
-//         };
-
-//         const next = document.createElement("button");
-//         next.textContent = ">";
-//         next.onclick = () => {
-//             current = new Date(year, month + 1, 1);
-//             render();
-//         };
-
-//         const title = document.createElement("div");
-//         title.textContent = `${current.toLocaleString("default", { month: "long" })} ${year}`;
-
-//         header.appendChild(prev);
-//         header.appendChild(title);
-//         header.appendChild(next);
-//         container.appendChild(header);
-
-//         // Grid
-//         const grid = document.createElement("div");
-//         grid.className = "calendar-grid";
-
-//         const weekNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-//         weekNames.forEach(d => {
-//             const el = document.createElement("div");
-//             // el.style.fontWeight = "bold";
-//             el.textContent = d;
-//             grid.appendChild(el);
-//         });
-
-//         // Empty spaces
-//         for (let i = 0; i < firstDay; i++) {
-//             grid.appendChild(document.createElement("div"));
-//         }
-
-//         // Days
-//         for (let day = 1; day <= daysInMonth; day++) {
-//             const dateObj = new Date(year, month, day);
-
-//             const el = document.createElement("div");
-//             el.textContent = day;
-//             el.className = "calendar-day";
-
-//             // Single mode highlight
-//             if (mode === "single" && startDate &&
-//                 dateObj.toDateString() === startDate.toDateString()) {
-//                 el.classList.add("selected");
-
-//             }
-
-//             // Range mode highlight
-//             if (mode === "range" && startDate && endDate) {
-//                 if (dateObj >= startDate && dateObj <= endDate) {
-//                     el.classList.add("range");
-//                 }
-//                 if (
-//                     dateObj.toDateString() === startDate.toDateString() ||
-//                     dateObj.toDateString() === endDate.toDateString()
-//                 ) {
-//                     el.classList.add("selected");
-
-//                 }
-//             }
-
-//             el.onclick = () => {
-//                 if (mode === "single") {
-//                     // if (dateObj > current) {
-//                     //     el.style.cursor = "not-allowed";
-//                     // }
-//                     // else {
-//                     startDate = dateObj;
-//                     el.setAttribute("data-ondate", "true");
-//                     onSelect(startDate, el);
-//                     // }
-//                 }
-
-//                 if (mode === "range") {
-//                     // if (dateObj > current) {
-//                     //     el.style.cursor = "not-allowed";
-//                     // }
-//                      el.setAttribute("data-betweendate", "true");
-//                     if (!startDate || (startDate && endDate)) {
-//                         startDate = dateObj;
-//                         endDate = null;
-//                     } else if (dateObj >= startDate) {
-//                         endDate = dateObj;
-//                         onSelect(startDate, endDate);
-//                     } else {
-//                         startDate = dateObj;
-//                         endDate = null;
-//                     }
-//                 }
-
-//                 render();
-//             };
-
-//             grid.appendChild(el);
-//         }
-
-//         container.appendChild(grid);
-//     }
-
-//     render();
-// }
-
-// ==============================
-// GLOBAL FILTER STATE
-// ==============================
-// const filterObject = {
-//     module: "",
-//     action: "",
-//     timeBase: ""
-// };
-
-// let specificDateFilter = "";
-// let rangeDateFilter = ["", ""];
 
 // ==============================
 // INIT CALENDAR ONLY ONCE
@@ -1123,6 +1033,7 @@ function buildCalendar(containerId, state, onSelect) {
 
         ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(day => {
             const d = document.createElement("div");
+            d.classList.add("week-day");
             d.textContent = day;
             grid.appendChild(d);
         });
@@ -1145,12 +1056,12 @@ function buildCalendar(containerId, state, onSelect) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            const isFuture = dateObj > today;
+            // const isFuture = dateObj > today;
 
-            if (isFuture) {
-                cell.classList.add("disabled-date");
-                cell.setAttribute("aria-disabled", "true");
-            }
+            // if (isFuture) {
+            //     cell.classList.add("disabled-date");
+            //     cell.setAttribute("aria-disabled", "true");
+            // }
 
             // SINGLE MODE
             if (
@@ -1181,7 +1092,7 @@ function buildCalendar(containerId, state, onSelect) {
 
             // CLICK
             cell.onclick = () => {
-                if (isFuture) return;
+                // if (isFuture) return;
 
                 if (state.mode === "single") {
                     state.startDate = dateObj;
@@ -1222,4 +1133,32 @@ function showLoading() {
 function hideLoading() {
     document.getElementById('loader').style.display = 'none';
 }
+
+let currentToast = null;
+
+let triggerToast = function (message, duration = 1000, type = 'info') {
+    const fallback = typeof message === 'string' ? message : 'Notification';
+
+    if (currentToast) {
+        currentToast.toastElement.remove();
+        currentToast = null;
+    }
+
+    const backgroundColor = (type === 'warning') ? '#FFA500' :
+        (type === 'success') ? '#4CAF50' :
+            (type === 'error') ? '#F44336' : '#2196F3';
+
+    currentToast = Toastify({
+        text: fallback,
+        duration: duration,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        backgroundColor,
+        // close: true, 
+        transition: "linear",
+        onClick: function () { }
+    });
+    currentToast.showToast();
+};
 ZOHO.embeddedApp.init();

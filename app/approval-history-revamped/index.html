@@ -6,6 +6,8 @@
     <title>Zoho CRM – Approval History</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://live.zwidgets.com/js-sdk/1.4/ZohoEmbededAppSDK.min.js"></script>
+    <link rel="stylesheet" href="../lib/toastify.min.css" />
+    <script src="../lib/toastify.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -84,9 +86,12 @@
                         aria-label="Search time range" />
                     <div class="filter-dropdown__option selected" role="option" aria-selected="true"
                         data-value="Anytime" data-default="true">Anytime</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Today">Today</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-7">Last 7 Days</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-30">Last 30 Days</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Today">Today
+                    </div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-7">Last 7
+                        Days</div>
+                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-30">Last
+                        30 Days</div>
                     <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
                         aria-selected="false" data-value="on">On Specific Date</div>
                     <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
@@ -98,7 +103,7 @@
                     <div class="calendar" id="single-calendar"></div>
                 </div>
 
-                 <!-- <div class="calendar-wrapper">
+                <!-- <div class="calendar-wrapper">
                     <div id="singleCalendar" class="calendar"></div>
                 </div> -->
             </div>
