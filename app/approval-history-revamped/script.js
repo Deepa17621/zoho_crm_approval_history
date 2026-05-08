@@ -13,6 +13,7 @@ const calendarState = {
     initialized: false,
     mode: "single",
     current: new Date(),
+    specificDate: null,
     startDate: null,
     endDate: null
 };
@@ -92,7 +93,9 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
     document.querySelectorAll(".filter-dropdown__trigger").forEach(header => {
 
         const dropdown = document.getElementById(header.dataset.dropdown);
-        let calendarWrapper = document.querySelector(".filter-dropdown__calendar");
+        // let calendarWrapper = document.querySelector(".filter-dropdown__calendar");
+
+        let calendarWrapper = document.querySelector(".filter-calendar-wrapper");
 
         const label = document.getElementById(header.dataset.label);
 
@@ -158,11 +161,13 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                         break;
 
                     case "timeFilterLabel":
-
                         if (val === "on") {
+                             document.querySelector(".filter-calendar-wrapper").style.display = "block"
                             filterObject.timeBase = "on";
 
-                            initCalendar();
+
+                            // initCalendar();
+                            handleCalendarEvent();
 
                             // if (calendarState.mode === "range") {
                             //     let selectedDays = document.querySelectorAll(".calendar-day.range");
@@ -177,17 +182,22 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                             // }
                             calendarState.mode = "single";
 
-                            document.querySelector(".filter-dropdown__calendar")
-                                .style.display = "block";
+                            // document.querySelector(".filter-dropdown__calendar")
+                            //     .style.display = "block";
+
+                            document.querySelector(".single-date-filter").style.display = "flex";
+                            document.querySelector(".range-date-filter").style.display = "none";
+
 
                             break;
                         }
 
                         if (val === "between") {
-
+                             document.querySelector(".filter-calendar-wrapper").style.display = "block"
                             filterObject.timeBase = "between";
 
-                            initCalendar();
+                            // initCalendar();
+                            handleCalendarEvent();
 
                             // if (calendarState.mode === "single") {
                             //     let selectedDays = document.querySelectorAll(".calendar-day.selected");
@@ -202,8 +212,12 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
                             calendarState.mode = "range";
 
-                            document.querySelector(".filter-dropdown__calendar")
-                                .style.display = "block";
+                            // document.querySelector(".filter-dropdown__calendar")
+                            //     .style.display = "block";
+
+                            document.querySelector(".range-date-filter").style.display = "inline-flex";
+                            document.querySelector(".single-date-filter").style.display = "none";
+
 
                             break;
                         }
@@ -274,9 +288,10 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
 
         const selectedStatus = document.querySelector("#status-filter-list .selected").dataset.value;
         const selectedTime = document.querySelector("#time-filter-list .selected").dataset.value;
+       
         const clearBtn = document.getElementById("clr-filter-txt");
 
-        if (selectedModule !== "All Modules" || selectedStatus !== "All Status" || selectedTime !== "Anytime") {
+        if ((selectedModule !== "All Modules" || selectedStatus !== "All Status" || selectedTime !== "Anytime") && (selectedTime !== "on" && selectedTime !== "between")) {
             clearBtn.style.display = "block";
         } else {
             clearBtn.style.display = "none";
@@ -310,11 +325,12 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
             }
 
         });
-        let calendar = document.querySelector(".filter-dropdown__calendar");
-        if (calendar.contains(e.target)) flag = true;
-        if (!flag) {
-            calendar.style.display = "none";
-        }
+        // let calendar = document.querySelector(".filter-dropdown__calendar");
+        // let calendar = document.querySelector(".filter-calendar-wrapper");
+        // if (calendar.contains(e.target)) flag = true;
+        // if (!flag) {
+        //     calendar.style.display = "none";
+        // }
         // const clickedInsidePopup = popup.contains(e.target);
         // const clickedButton = btn.contains(e.target);
 
@@ -467,6 +483,7 @@ function getFilteredRecords(filters, d = "") {
             }
             // Time Based Filter
             else if (key === "timeBase") {
+
                 let recordAuditTime = new Date(record.audit_time);
                 let date = new Date(recordAuditTime);
                 let formatted = date.toISOString().slice(0, 10);
@@ -490,6 +507,7 @@ function getFilteredRecords(filters, d = "") {
                     }
                 }
                 else if (filterObject[key].trim() == "on") {
+
                     if (formatted !== specificDateFilter) {
                         match = false;
                         break;
@@ -514,12 +532,15 @@ function getFilteredRecords(filters, d = "") {
 
 function clearFilter() {
     // Cache selectors
-    const calendar = document.querySelector(".filter-dropdown__calendar");
+    // const calendar = document.querySelector(".filter-dropdown__calendar");
+    const calendarWrapper = document.querySelector(".filter-calendar-wrapper");
+    const dateInputs = document.querySelectorAll(".date-input");
     const clearText = document.querySelector("#clr-filter-txt");
     const globalSearch = document.querySelector("#global-search");
 
     // Hide elements
-    calendar.style.display = "none";
+    // calendar.style.display = "none";
+    calendarWrapper.style.display = "none";
     clearText.style.display = "none";
 
     // Reset filter object
@@ -527,6 +548,13 @@ function clearFilter() {
 
     // Reset calendar state
     calendarState.startDate = calendarState.endDate = null;
+    specificDateFilter = null;
+    rangeDateFilter[0] = rangeDateFilter[1] = null;
+
+    // Reset calendar inputs
+    dateInputs.forEach(element => {
+        element.value = "";
+    });
 
     // Remove classes
     document.querySelectorAll(".range").forEach(el => el.classList.remove("range"));
@@ -734,9 +762,8 @@ async function openRow(row, mainRow, trigger, id, module, connectionName) {
 
         const moduleAPIName = allModules[module];
 
-        const url = `https://www.zohoapis.com/crm/v8/${
-            module === "Potentials" ? "Deals" : moduleAPIName
-        }/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
+        const url = `https://www.zohoapis.com/crm/v8/${module === "Potentials" ? "Deals" : moduleAPIName
+            }/${id}/__timeline?filters=%7B%22field%22%3A%7B%22api_name%22%3A%22source%22%7D%2C%22comparator%22%3A%22equal%22%2C%22value%22%3A%22approval_process%22%7D%20`;
 
         const req_data = {
             url,
@@ -816,7 +843,7 @@ function renderApproverTable(row, stages) {
     for (let j = stages.length - 1; j >= 0; j--) {
 
         if (stages[j].action === "updated") continue;
-        if(stages[j].done_by === null) continue;
+        if (stages[j].done_by === null) continue;
 
         const date = new Date(stages[j].audited_time);
 
@@ -870,31 +897,57 @@ function renderApproverTable(row, stages) {
                 <td>${formattedAuditedTime}</td>
 
                 <td
-                    title="${
-                        stages[j].automation_details
-                            ?.approval_process
-                            ?.comments?.length > 20
-                            ? stages[j].automation_details
-                                ?.approval_process
-                                ?.comments
-                            : ""
-                    }"
+                    title="${stages[j].automation_details
+                ?.approval_process
+                ?.comments?.length > 20
+                ? stages[j].automation_details
+                    ?.approval_process
+                    ?.comments
+                : ""
+            }"
                 >
-                    ${
-                        stages[j].automation_details
-                            ?.approval_process
-                            ?.comments
-                        ||
-                        (status === "Pending"
-                            ? comments
-                            : "-")
-                    }
+                    ${stages[j].automation_details
+                ?.approval_process
+                ?.comments
+            ||
+            (status === "Pending"
+                ? comments
+                : "-")
+            }
                 </td>
             </tr>
         `;
     }
 
     row.querySelector(".mini-table tbody").innerHTML = trs;
+}
+
+const clearBtn = document.getElementById("clr-filter-txt");
+function handleCalendarEvent() {
+    document.querySelectorAll(".date-input").forEach(element => {
+        element.addEventListener("change", (e) => {
+            clearBtn.style.display = "block";
+            let targetElement = e.target;
+            let dateFilterType = targetElement.id;
+            if (dateFilterType === "specific-date") {
+                specificDateFilter = targetElement.value;
+                applyFilter(filterObject, specificDateFilter);
+            }
+            else {
+                if (dateFilterType === "start-date") {
+                    rangeDateFilter[0] = targetElement.value;
+                    document.querySelector("#end-date").min = targetElement.value;
+                }
+                else if (dateFilterType === "end-date") {
+                    rangeDateFilter[1] = targetElement.value;
+                    if(rangeDateFilter[0] != null){
+                        applyFilter(filterObject, rangeDateFilter);
+                    }
+                }
+            }
+        })
+
+    });
 }
 
 async function dynamicTaskRunner(tasks) {

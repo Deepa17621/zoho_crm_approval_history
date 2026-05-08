@@ -91,7 +91,22 @@
      display: flex;
      justify-content: space-between;
      background-color: transparent;
+ }
 
+ .date-input {
+     border-radius: 4px;
+     font-size: 14px;
+     background-color: transparent;
+      border: 1px solid #b9b8b8;
+     cursor: pointer;
+     width: 150px;
+     padding: 9.1px;
+ }
+
+ #rangeDateFilter{
+    display: none;
+    gap: 5px;
+    align-items: center;
  }
 
  .filter-dropdown__trigger.selected {
@@ -109,7 +124,7 @@
      font-size: 13px;
  }
 
-/* // Animation of chevron- might be deleted soon */
+ /* // Animation of chevron- might be deleted soon */
  /* .view-trigger .fa-solid {
      transition: transform 0.2s ease;
  }
@@ -235,6 +250,12 @@
      background-color: #F0F4FC;
  }
 
+ .range-date-filter,
+ .single-date-filter {
+     display: none;
+ }
+
+ .range-date-filter.active,
  /* date filter */
  .filter-dropdown__calendar {
      position: absolute;
@@ -592,13 +613,14 @@
 
  .error-message {
 
-    padding: 20px;
+     padding: 20px;
 
-    color: #dc2626;
+     color: #dc2626;
 
-    font-size: 14px;
-    margin: auto;
-}
+     font-size: 14px;
+     margin: auto;
+ }
+
  .approved {
      background: var(--approved);
  }

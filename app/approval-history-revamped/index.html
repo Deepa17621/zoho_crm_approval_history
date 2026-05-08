@@ -99,14 +99,29 @@
                 </div>
 
                 <!-- Calendar (shown only when "on" or "between" is selected) -->
-                <div class="filter-dropdown__calendar" id="time-filter-calendar" hidden>
+                <!-- <div class="filter-dropdown__calendar" id="time-filter-calendar" hidden>
                     <div class="calendar" id="single-calendar"></div>
-                </div>
+                </div> -->
 
                 <!-- <div class="calendar-wrapper">
                     <div id="singleCalendar" class="calendar"></div>
                 </div> -->
             </div>
+
+            <div class="filter-calendar-wrapper">
+                <!-- Single Date Filter -->
+                <div class="time-filter single-date-filter" id="singleDateFilter">
+                    <input type="date" name="specific-date" class="date-input" id="specific-date">
+                </div>
+
+                <!-- Range Date Filter -->
+                <div class="time-filter range-date-filter" id="rangeDateFilter">
+                    <input type="date" name="start-date" class="date-input" id="start-date">
+                    <span class="range-separator">to</span>
+                    <input type="date" name="end-date" class="date-input" id="end-date">
+                </div>
+            </div>
+
             <div class="clr-filter-wrapper">
                 <span id="clr-filter-txt">Clear Filter</span>
             </div>
