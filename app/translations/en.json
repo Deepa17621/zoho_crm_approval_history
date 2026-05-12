@@ -1,15 +1,41 @@
 {
-    "APPROVAL_HISTORY_PAGE_TITLE": "Approval History",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_anytime": "Anytime",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_today": "Today",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_last7Days": "Last 7 Days",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_last30Days": "Last 30 Days",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_onSpecificDate": "On",
-    "APPROVAL_HISTORY_DATE_FILTER_OPTION_between": "Between",
-    "APPROVAL_HISTORY_DATE_FILTER_SEARCH_placeholder": "Search...",
-    "APPROVAL_HISTORY_SEARCH_RECORD_placeholder": "Search by Record Name",
-    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_recordName": "Record Name",
-    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_allModules": "All Modules",
-    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_allStatus": "All Status",
-    "APPROVAL_HISTORY_MAIN_TABLE_HEADER_approvers": "Approvers"
+    "history.APPROVAL.txt.pageTitle": "Approval History",
+    "history.APPROVAL.txt.loading": "Loading...",
+    "history.APPROVAL.txt.paginationLabel": "No.of records",
+    "history.APPROVAL.txt.pendingComment": "Not yet provided",
+    "history.APPROVAL.txt.delegated": "Delegated",
+    "history.APPROVAL.txt.resubmitted": "Resubmitted",
+    "history.APPROVAL.txt.adminReject": "Admin_Reject",
+
+    "history.APPROVAL.btn.clearFilter": "Clear Filter",
+    "history.APPROVAL.btn.viewApproverDetail": "View Details",
+    "history.APPROVAL.btn.hideApproverDetail": "Hide Details",
+    
+    "history.APPROVAL.placeholder.globalSearch" : "Search by Record Name", 
+    "history.APPROVAL.placeholder.filterSearch" : "Search...", 
+
+    "history.APPROVAL.dropdownOption.allModules": "All Modules",
+    "history.APPROVAL.dropdownOption.allStatus": "All Status",
+    "history.APPROVAL.dropdownOption.approved": "Approved",
+    "history.APPROVAL.dropdownOption.pending": "Pending",
+    "history.APPROVAL.dropdownOption.rejected": "Rejected",
+    "history.APPROVAL.dropdownOption.anytime": "Anytime",
+    "history.APPROVAL.dropdownOption.today": "Today",
+    "history.APPROVAL.dropdownOption.last7Days": "Last 7 Days",
+    "history.APPROVAL.dropdownOption.last30Days": "Last 30 Days",
+    "history.APPROVAL.dropdownOption.on": "On",
+    "history.APPROVAL.dropdownOption.between": "Between",
+
+    "history.APPROVAL.tblHeader.recordName": "Record Name",
+    "history.APPROVAL.tblHeader.module": "Module",
+    "history.APPROVAL.tblHeader.status": "Status",
+    "history.APPROVAL.tblHeader.details": "Details",
+    "history.APPROVAL.tblHeader.approverName":"Approver Name",
+    "history.APPROVAL.tblHeader.eventTime": "Event Time",
+    "history.APPROVAL.tblHeader.comments": "Comments",
+
+    "history.APPROVAL.error.dropdownSearch": "No results found",
+    "history.APPROVAL.error.globalSearch": "No records match your filter",
+
+    "history.APPROVAL.success.clearFilter": "Filter categories reset!"
 }  

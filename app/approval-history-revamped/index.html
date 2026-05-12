@@ -18,7 +18,7 @@
 
         <!-- ─── Title ─── -->
         <div class="page-header__title">
-            <h2>Approval History</h2>
+            <h2 class="history.APPROVAL.txt.pageTitle">Approval History</h2>
         </div>
 
         <!-- ─── Filters Bar ─── -->
@@ -31,7 +31,7 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="search" id="global-search" class="filter-search__input"
+                <input type="search" id="global-search" class="filter-search__input history.APPROVAL.placeholder.globalSearch"
                     placeholder="Search by Record Name..." />
             </div>
 
@@ -43,9 +43,9 @@
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="filter-dropdown__menu" id="module-filter-list" role="listbox" hidden>
-                    <input type="search" class="filter-dropdown__search" placeholder="Search..."
+                    <input type="search" class="filter-dropdown__search history.APPROVAL.placeholder.filterSearch" placeholder="Search..."
                         aria-label="Search modules" />
-                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                    <div class="filter-dropdown__option selected history.APPROVAL.dropdownOption.allModules" role="option" aria-selected="true"
                         data-value="All Modules" data-default="true">
                         All Modules</div>
                     <!-- JS-populated module options go here -->
@@ -60,16 +60,16 @@
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="filter-dropdown__menu" id="status-filter-list" role="listbox" hidden>
-                    <input type="search" class="filter-dropdown__search" placeholder="Search..."
+                    <input type="search" class="filter-dropdown__search history.APPROVAL.placeholder.filterSearch" placeholder="Search..."
                         aria-label="Search statuses" />
-                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                    <div class="filter-dropdown__option selected history.APPROVAL.dropdownOption.allStatus" role="option" aria-selected="true"
                         data-value="All Status" data-default="true">
                         All Status</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Approved">
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.approved" role="option" aria-selected="false" data-value="Approved">
                         Approved</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Rejected">
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.rejected" role="option" aria-selected="false" data-value="Rejected">
                         Rejected</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Pending">
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.pending" role="option" aria-selected="false" data-value="Pending">
                         Pending</div>
                 </div>
             </div>
@@ -82,19 +82,19 @@
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="filter-dropdown__menu" id="time-filter-list" role="listbox" hidden>
-                    <input type="search" class="filter-dropdown__search" placeholder="Search..."
+                    <input type="search" class="filter-dropdown__search history.APPROVAL.placeholder.filterSearch" placeholder="Search..."
                         aria-label="Search time range" />
-                    <div class="filter-dropdown__option selected" role="option" aria-selected="true"
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.anytime selected" role="option" aria-selected="true"
                         data-value="Anytime" data-default="true">Anytime</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="Today">Today
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.today" role="option" aria-selected="false" data-value="Today">Today
                     </div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-7">Last 7
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.last7Days" role="option" aria-selected="false" data-value="last-7">Last 7
                         Days</div>
-                    <div class="filter-dropdown__option" role="option" aria-selected="false" data-value="last-30">Last
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.last30Days" role="option" aria-selected="false" data-value="last-30">Last
                         30 Days</div>
-                    <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
-                        aria-selected="false" data-value="on">On Specific Date</div>
-                    <div class="filter-dropdown__option filter-dropdown__option--date" role="option"
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.on filter-dropdown__option--date" role="option"
+                        aria-selected="false" data-value="on">On</div>
+                    <div class="filter-dropdown__option history.APPROVAL.dropdownOption.between filter-dropdown__option--date" role="option"
                         aria-selected="false" data-value="between">Between</div>
                 </div>
 
@@ -123,7 +123,7 @@
             </div>
 
             <div class="clr-filter-wrapper">
-                <span id="clr-filter-txt">Clear Filter</span>
+                <span id="clr-filter-txt" class="history.APPROVAL.btn.clearFilter">Clear Filter</span>
             </div>
         </div>
     </header>
@@ -131,10 +131,10 @@
         <table id="main-table">
             <thead>
                 <tr>
-                    <th class="main-table-headers" id="tbl-hdr-record-name">Record Name</th>
-                    <th class="main-table-headers" id="tbl-hdr-module">Module</th>
-                    <th class="main-table-headers" id="tbl-hdr-status">Status</th>
-                    <th class="main-table-headers" id="tbl-hdr-details">Details</th>
+                    <th class="main-table-headers history.APPROVAL.tblHeader.recordName" id="tbl-hdr-record-name">Record Name</th>
+                    <th class="main-table-headers history.APPROVAL.tblHeader.module" id="tbl-hdr-module">Module</th>
+                    <th class="main-table-headers history.APPROVAL.tblHeader.status" id="tbl-hdr-status">Status</th>
+                    <th class="main-table-headers history.APPROVAL.tblHeader.details" id="tbl-hdr-details">Details</th>
                 </tr>
             </thead>
             <tbody id="main-table__body"></tbody>
@@ -142,7 +142,7 @@
     </main>
     <footer class="page-footer">
         <div class="pagination-wrapper">
-            <span class="pagination-label"> No.of records </span>
+            <span class="pagination-label history.APPROVAL.txt.paginationLabel"> No.of records </span>
             <select name="pagination" id="pagination-select">
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -157,7 +157,8 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
+    <script type="module" src="../lib/util.js"></script>
 </body>
 
 </html>

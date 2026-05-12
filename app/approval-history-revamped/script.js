@@ -1,3 +1,4 @@
+import {initTranslations, TRANSLATIONS} from '../lib/util.js'
 //Global Variables
 let filterObject = {
     module: "",
@@ -25,6 +26,7 @@ let allModules = {};
 let recordsCountPerPage = 10;
 let currentPage = 1;
 let allRecordsArray = [];
+let startIndex, endIndex;
 let totalPages = '';
 
 // Elements 
@@ -38,6 +40,21 @@ let paginationPageTxt = document.querySelector(".pagination-page-no-txt");
 
 
 ZOHO.embeddedApp.on("PageLoad", async function (data) {
+
+    await initTranslations();
+    let labels = document.querySelectorAll(".filter-dropdown__label").forEach(element => {
+        switch (true) {
+            case element.id == "timeFilterLabel":
+                element.innerHTML = TRANSLATIONS["history.APPROVAL.dropdownOption.anytime"];
+                break;
+            case element.id == "statusLabel":
+                element.innerHTML = TRANSLATIONS["history.APPROVAL.dropdownOption.allStatus"];
+                break;
+            case element.id == "moduleLabel":
+                element.innerHTML = TRANSLATIONS["history.APPROVAL.dropdownOption.allModules"];
+                break;
+        }
+    });
 
     // i. Get Environment Details
     env_details = await ZOHO.CRM.CONFIG.GetCurrentEnvironment();
@@ -269,7 +286,7 @@ ZOHO.embeddedApp.on("PageLoad", async function (data) {
                 if (!noResult) {
                     noResult = document.createElement("div");
                     noResult.className = "no-results";
-                    noResult.textContent = "No results found";
+                    noResult.textContent = TRANSLATIONS["history.APPROVAL.error.dropdownSearch"];
                     dropdown.appendChild(noResult);
                 }
 
@@ -382,7 +399,7 @@ function renderTable(currentPage, recordsPerPage, records) {
              <tr class="no-records-found-tr">
                 <td colspan="4" style="text-align: center; padding: 20px;">
                     <img src="../assets/no_record_img.jpg" alt="no records found!">
-                    <div class="no-records-found-txt">No records match your filter</div>
+                    <div class="no-records-found-txt history.APPROVAL.error.globalSearch">${TRANSLATIONS["history.APPROVAL.error.globalSearch"]}</div>
                 </td>
             </tr>   
         `;
@@ -579,12 +596,12 @@ function clearFilter() {
     // Reset inputs & labels
     globalSearch.value = "";
 
-    document.querySelector("#moduleLabel").textContent = "All Modules";
-    document.querySelector("#statusLabel").textContent = "All Status";
-    document.querySelector("#timeFilterLabel").textContent = "Anytime";
+    document.querySelector("#moduleLabel").textContent = TRANSLATIONS["history.APPROVAL.dropdownOption.allModules"];
+    document.querySelector("#statusLabel").textContent = TRANSLATIONS[ "history.APPROVAL.dropdownOption.allStatus"];
+    document.querySelector("#timeFilterLabel").textContent = TRANSLATIONS["history.APPROVAL.dropdownOption.anytime"];
 
     applyFilter({});
-    triggerToast("Filter categories reset!", 2000);
+    triggerToast(TRANSLATIONS["history.APPROVAL.success.clearFilter"], 2000);
 }
 
 // ---------------- CREATE ROW ELEMENTS ---------------------
@@ -599,6 +616,7 @@ function createRow(obj, index) {
             : data.action === "Submitted" || data.action === "Delegated"
                 ? "Pending"
                 : data.action;
+    const statusText = overAllStatus == "Approved" ? TRANSLATIONS["history.APPROVAL.dropdownOption.approved"] : (overAllStatus == "Pending" ? TRANSLATIONS["history.APPROVAL.dropdownOption.pending"] : data.action == "Rejected" ? TRANSLATIONS["history.APPROVAL.dropdownOption.rejected"]: data.action);
 
     wrapper.className = "row";
     wrapper.dataset.id = data.record.id;
@@ -607,8 +625,8 @@ function createRow(obj, index) {
     wrapper.innerHTML = `
         <td class="recordName"><span id="record-name" title = "${data.record.name.length > 20 ? data.record.name : ""}">${data.record.name}</span></td>
         <td>${data.module}</td>
-        <td><span class="tag ${overAllStatus.toLowerCase()}">${overAllStatus}</span></td>
-        <td><div class="view-trigger" data-index="${index}"><span class="view-approver-details-trigger">View Details</span><span><i class="fa-solid fa-chevron-down"></i></span></div></td>
+        <td><span class="tag ${overAllStatus.toLowerCase()}">${statusText}</span></td>
+        <td><div class="view-trigger" data-index="${index}"><span class="view-approver-details-trigger history.APPROVAL.btn.viewApproverDetail">${TRANSLATIONS["history.APPROVAL.btn.viewApproverDetail"]}</span><span><i class="fa-solid fa-chevron-down"></i></span></div></td>
     `;
     // if (wrapper.querySelector(".recordName").scrollWidth > wrapper.querySelector(".recordName").clientWidth) {
     //     wrapper.querySelector(".recordName").title = wrapper.querySelector(".recordName").textContent.trim();
@@ -636,17 +654,17 @@ function createApproverRow(obj, index) {
 
                             <div class="loading-overlay hidden">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading...</div>
+                                <div class="loading-text history.APPROVAL.txt.loading">${TRANSLATIONS["history.APPROVAL.txt.loading"]}</div>
                             </div>
 
                             <div class="approver-content hidden">
                                 <table class="mini-table">
                                     <thead>
                                         <tr>
-                                            <th>Approver Name</th>
-                                            <th>Status</th>
-                                            <th>Event Time</th>
-                                            <th>Comments</th>
+                                            <th class="history.APPROVAL.tblHeader.approverName">${TRANSLATIONS['history.APPROVAL.tblHeader.approverName']}</th>
+                                            <th class="history.APPROVAL.tblHeader.status">${TRANSLATIONS['history.APPROVAL.tblHeader.status']}</th>
+                                            <th class="history.APPROVAL.tblHeader.eventTime">${TRANSLATIONS['history.APPROVAL.tblHeader.eventTime']}</th>
+                                            <th class="history.APPROVAL.tblHeader.comments">${TRANSLATIONS['history.APPROVAL.tblHeader.comments']}</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -826,8 +844,8 @@ function updateTriggerUI(trigger, isOpen) {
     const icon = trigger.querySelector(".fa-solid");
 
     text.textContent = isOpen
-        ? "Hide Details"
-        : "View Details";
+        ? TRANSLATIONS["history.APPROVAL.btn.hideApproverDetail"]
+        : TRANSLATIONS["history.APPROVAL.btn.viewApproverDetail"];
 
     icon.classList.toggle("fa-chevron-up", isOpen);
 
@@ -844,6 +862,7 @@ function renderApproverTable(row, stages) {
 
         if (stages[j].action === "updated") continue;
         if (stages[j].done_by === null) continue;
+        if(stages[j].action.toLowerCase() === "task_assigned") continue;  // 
 
         const date = new Date(stages[j].audited_time);
 
@@ -861,26 +880,34 @@ function renderApproverTable(row, stages) {
             .replace(",", "");
 
         let status = "";
-
+        let statusText = "";
         let comments = "";
 
         if (stages[j].action === "final_approval") {
-
             status = "Approved";
+            statusText = TRANSLATIONS["history.APPROVAL.dropdownOption.approved"];
 
         } else if (
-            stages[j].action.toLowerCase() === "submitted" ||
-            stages[j].action === "task_assigned"
+            stages[j].action.toLowerCase() === "submitted"
         ) {
-
             status = "Pending";
+            statusText = TRANSLATIONS["history.APPROVAL.dropdownOption.pending"];
+            comments = TRANSLATIONS["history.APPROVAL.txt.pendingComment"];
 
-            comments = "Not yet provided";
-
-        } else {
-
+        }else if(stages[j].action.toLowerCase() === "rejected"){
+            status = "Rejected";
+            statusText = TRANSLATIONS["history.APPROVAL.dropdownOption.rejected"]
+        } 
+        else if(stages[j].action.toLowerCase() === "delegated" || stages[j].action.toLowerCase() === "resubmitted"){
             status = stages[j].action;
-
+            statusText = status == "resubmitted" ?TRANSLATIONS["history.APPROVAL.txt.resubmitted"] :TRANSLATIONS["history.APPROVAL.txt.delegated"];
+        }
+        else if(stages[j].action.toLowerCase() === "admin_reject"){
+            status = stages[j].action;
+            statusText = TRANSLATIONS["history.APPROVAL.txt.adminReject"];
+        }
+        else {
+            status = stages[j].action;
             status = `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
         }
 
@@ -890,7 +917,7 @@ function renderApproverTable(row, stages) {
 
                 <td>
                     <span class="tag ${status.toLowerCase()}">
-                        ${status}
+                        ${statusText? statusText : status}
                     </span>
                 </td>
 

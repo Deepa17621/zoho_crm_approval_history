@@ -1,0 +1,41 @@
+{
+    "history.APPROVAL.txt.pageTitle": "审批历史",
+    "history.APPROVAL.txt.loading": "加载中...",
+    "history.APPROVAL.txt.paginationLabel": "记录数",
+    "history.APPROVAL.txt.pendingComment": "尚未提供",
+    "history.APPROVAL.txt.delegated": "已委派",
+    "history.APPROVAL.txt.resubmitted": "重新提交",
+    "history.APPROVAL.txt.adminReject": "管理员拒绝",
+
+    "history.APPROVAL.btn.clearFilter": "清除筛选",
+    "history.APPROVAL.btn.viewApproverDetail": "查看详情",
+    "history.APPROVAL.btn.hideApproverDetail": "隐藏详情",
+
+    "history.APPROVAL.placeholder.globalSearch": "按记录名称搜索",
+    "history.APPROVAL.placeholder.filterSearch": "搜索...",
+
+    "history.APPROVAL.dropdownOption.allModules": "所有模块",
+    "history.APPROVAL.dropdownOption.allStatus": "所有状态",
+    "history.APPROVAL.dropdownOption.approved": "已批准",
+    "history.APPROVAL.dropdownOption.pending": "待处理",
+    "history.APPROVAL.dropdownOption.rejected": "已拒绝",
+    "history.APPROVAL.dropdownOption.anytime": "任何时间",
+    "history.APPROVAL.dropdownOption.today": "今天",
+    "history.APPROVAL.dropdownOption.last7Days": "过去7天",
+    "history.APPROVAL.dropdownOption.last30Days": "过去30天",
+    "history.APPROVAL.dropdownOption.on": "于",
+    "history.APPROVAL.dropdownOption.between": "介于",
+
+    "history.APPROVAL.tblHeader.recordName": "记录名称",
+    "history.APPROVAL.tblHeader.module": "模块",
+    "history.APPROVAL.tblHeader.status": "状态",
+    "history.APPROVAL.tblHeader.details": "详情",
+    "history.APPROVAL.tblHeader.approverName": "审批人名称",
+    "history.APPROVAL.tblHeader.eventTime": "事件时间",
+    "history.APPROVAL.tblHeader.comments": "评论",
+
+    "history.APPROVAL.error.dropdownSearch": "未找到结果",
+    "history.APPROVAL.error.globalSearch": "无记录",
+
+    "history.APPROVAL.success.clearFilter": "筛选条件已重置！"
+}
